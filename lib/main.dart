@@ -1,29 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:pokedex/pages/pokemon_list_page.dart';
+import 'package:pokedex/utilities/app_router.dart';
 
 void main() {
   runApp(PokedexApp());
 }
 
-class PokedexApp extends StatelessWidget {
-  // This widget is the root of your application.
+class PokedexApp extends StatefulWidget {
+  @override
+  _PokedexAppState createState() => _PokedexAppState();
+}
+
+class _PokedexAppState extends State<PokedexApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Pokedex',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+//        primarySwatch: Colors.grey,
+        primaryColor: Colors.white,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: HomePage(),
+      debugShowCheckedModeBanner: false,
+      initialRoute: PokemonListPage.route,
+      onGenerateRoute: AppRouter.generateRoute,
     );
   }
 }
 
-class HomePage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text('Test'),
-    );
-  }
-}
 
