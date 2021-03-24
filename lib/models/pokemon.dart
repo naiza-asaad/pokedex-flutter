@@ -1,3 +1,5 @@
+import 'package:pokedex/utilities/string_extension.dart';
+
 class Pokemon {
   int id;
   String name;
@@ -17,7 +19,8 @@ class Pokemon {
 
     return Pokemon(
       id: parsedJson['id'],
-      name: parsedJson['name'],
+      name: (parsedJson['name'] as String).inCaps,
+//      imageUrl: parsedJson['sprites']['other']['official-artwork']['front_default'],
       imageUrl: parsedJson['sprites']['front_default'],
       typeList: typeList,
     );

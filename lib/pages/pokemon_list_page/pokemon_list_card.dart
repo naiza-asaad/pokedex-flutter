@@ -1,95 +1,28 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:pokedex/models/pokemon.dart';
-import 'package:pokedex/services/pokedex_api_service.dart';
+import 'package:pokedex/pages/pokemon_page/pokemon_page.dart';
+import 'package:pokedex/pages/pokemon_page/pokemon_page_arguments.dart';
+import 'package:pokedex/utilities/color_utilities.dart';
 import 'package:pokedex/utilities/pokemon_color_picker.dart';
 import 'package:pokedex/utilities/string_extension.dart';
-import 'package:pokedex/utilities/color_utilities.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 
-class PokemonListPage extends StatefulWidget {
-  static const String route = '/';
-
-  @override
-  _PokemonListPageState createState() => _PokemonListPageState();
-}
-
-class _PokemonListPageState extends State<PokemonListPage> {
-  PokedexApiService _pokedexApiService = PokedexApiService();
-  List<Pokemon> _pokemonList;
-  bool isLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    fetchPokemonList();
-  }
-
-  void fetchPokemonList() async {
-    // simplePokemonList only contains the name and detailsUrl of each Pokemon.
-    // We fetch the details (types, image, etc.) after fetching simplePokemonList.
-    final simplePokemonList = await _pokedexApiService.fetchPokemonList();
-    _pokemonList =
-        await _pokedexApiService.fetchPokemonDetailsList(simplePokemonList);
-
-    setState(() {
-      isLoading = false;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Pokedex',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-            fontSize: 32.0,
-          ),
-        ),
-        elevation: 0,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.only(
-          left: 12.0,
-          right: 12.0,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (isLoading)
-              Center(child: CircularProgressIndicator())
-            else
-              Expanded(
-                child: GridView.builder(
-                  gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 200,
-                    childAspectRatio: 3 / 2,
-                  ),
-                  itemCount: _pokemonList.length,
-                  itemBuilder: (context, index) {
-                    Pokemon pokemon = _pokemonList[index];
-                    return PokemonListTile(pokemon);
-                  },
-                ),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class PokemonListTile extends StatelessWidget {
+class PokemonListCard extends StatelessWidget {
   final Pokemon _pokemon;
 
-  PokemonListTile(this._pokemon);
+  PokemonListCard(this._pokemon);
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {},
+      onTap: () => Navigator.pushNamed(
+        context,
+        PokemonPage.route,
+        arguments: PokemonPageArguments(
+          _pokemon,
+          PokemonColorPicker.getColor(_pokemon.typeList[0].type.name),
+        ),
+      ),
       child: Card(
         color: PokemonColorPicker.getColor(_pokemon.typeList[0].type.name),
         shape: RoundedRectangleBorder(
@@ -110,7 +43,10 @@ class PokemonListTile extends StatelessWidget {
             Positioned(
               bottom: 0,
               right: 0,
-              child: PokemonImage(imageUrl: _pokemon.imageUrl),
+              child: PokemonImage(
+                imageUrl: _pokemon.imageUrl,
+                pokemonId: _pokemon.id,
+              ),
             ),
           ],
         ),
@@ -133,7 +69,7 @@ class PokemonName extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Text(
-        _name.inCaps,
+        _name,
         style: TextStyle(
           color: Colors.white,
           fontWeight: FontWeight.bold,
@@ -224,23 +160,29 @@ class PokemonImage extends StatelessWidget {
   const PokemonImage({
     Key key,
     @required String imageUrl,
+    @required int pokemonId,
   })  : _imageUrl = imageUrl,
+        _pokemonId = pokemonId,
         super(key: key);
 
   final String _imageUrl;
+  final int _pokemonId;
 
   @override
   Widget build(BuildContext context) {
-    return CachedNetworkImage(
-      imageUrl: _imageUrl,
-      progressIndicatorBuilder: (context, url, downloadProgress) => Padding(
-        padding: const EdgeInsets.only(
-          bottom: 16.0,
-          right: 16.0,
+    return Hero(
+      tag: 'pokemonImageHero$_pokemonId',
+      child: CachedNetworkImage(
+        imageUrl: _imageUrl,
+        progressIndicatorBuilder: (context, url, downloadProgress) => Padding(
+          padding: const EdgeInsets.only(
+            bottom: 16.0,
+            right: 16.0,
+          ),
+          child: CircularProgressIndicator(value: downloadProgress.progress),
         ),
-        child: CircularProgressIndicator(value: downloadProgress.progress),
+        errorWidget: (context, url, error) => Icon(Icons.error),
       ),
-      errorWidget: (context, url, error) => Icon(Icons.error),
     );
 //    return Image.network(_imageUrl);
   }
