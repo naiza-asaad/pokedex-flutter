@@ -114,26 +114,7 @@ class CustomScaffold extends StatelessWidget {
                       Expanded(
                         child: TabBarView(
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: GridView.count(
-                                childAspectRatio: 5,
-                                crossAxisCount: 2,
-                                children: [
-                                  AboutGridLabel(label: 'Height'),
-                                  AboutGridValue(value: '${pokemon.heightInDecimeters}m'),
-
-                                  AboutGridLabel(label: 'Weight'),
-                                  AboutGridValue(value: '${pokemon.weightInDecimeters}kg'),
-
-                                  AboutGridLabel(label: 'Abilities'),
-                                  AboutGridValue(value: getAbilitiesString()),
-
-                                  AboutGridLabel(label: 'Base Experience'),
-                                  AboutGridValue(value: '${pokemon.baseExperience} xp'),
-                                ],
-                              ),
-                            ),
+                            AboutContainer(pokemon: pokemon),
                             Center(
                               child: Text(
                                 'Display Tab 2',
@@ -179,8 +160,38 @@ class CustomScaffold extends StatelessWidget {
     );
   }
 
+}
+
+class AboutContainer extends StatelessWidget {
+  const AboutContainer({
+    Key key,
+    @required this.pokemon,
+  }) : super(key: key);
+
+  final Pokemon pokemon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: GridView.count(
+        childAspectRatio: 5,
+        crossAxisCount: 2,
+        children: [
+          AboutGridLabel(label: 'Height'),
+          AboutGridValue(value: '${pokemon.heightInDecimeters} m'),
+          AboutGridLabel(label: 'Weight'),
+          AboutGridValue(value: '${pokemon.weightInDecimeters} kg'),
+          AboutGridLabel(label: 'Abilities'),
+          AboutGridValue(value: getAbilitiesString()),
+          AboutGridLabel(label: 'Base Experience'),
+          AboutGridValue(value: '${pokemon.baseExperience} xp'),
+        ],
+      ),
+    );
+  }
+
   String getAbilitiesString() {
-    print('test');
     var concatenated = StringBuffer();
     final abilityList = pokemon.abilityList;
     for (var i = 0; i < abilityList.length; ++i) {
@@ -190,7 +201,6 @@ class CustomScaffold extends StatelessWidget {
       }
     }
     return concatenated.toString();
-    print('/');
   }
 }
 
