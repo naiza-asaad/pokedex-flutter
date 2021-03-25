@@ -4,6 +4,7 @@ import 'package:pokedex/models/pokemon.dart';
 import 'package:pokedex/utilities/color_utilities.dart';
 import 'package:pokedex/utilities/pokemon_color_picker.dart';
 import 'package:pokedex/utilities/string_extension.dart';
+import 'package:charts_flutter/flutter.dart' as charts;
 
 class PokemonPage extends StatefulWidget {
   static const String route = '/pokemon';
@@ -115,15 +116,7 @@ class CustomScaffold extends StatelessWidget {
                         child: TabBarView(
                           children: [
                             AboutContainer(pokemon: pokemon),
-                            Center(
-                              child: Text(
-                                'Display Tab 2',
-                                style: TextStyle(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
+                            BaseStatsContainer(baseStats: pokemon.baseStats),
                             Center(
                               child: Text(
                                 'Display Tab 3',
@@ -159,7 +152,60 @@ class CustomScaffold extends StatelessWidget {
       ),
     );
   }
+}
 
+class BaseStatsContainer extends StatelessWidget {
+  const BaseStatsContainer({
+    Key key,
+    @required this.baseStats,
+  }) : super(key: key);
+
+  final PokemonBaseStats baseStats;
+
+  List<charts.Series<BaseStats, String>> getData() {
+    final data = [
+      BaseStats('HP', baseStats.hp),
+      BaseStats('Attack', baseStats.attack),
+      BaseStats('Defense', baseStats.defense),
+      BaseStats('Sp-Atk', baseStats.specialAttack),
+      BaseStats('Sp-Def', baseStats.specialDefense),
+      BaseStats('Speed', baseStats.speed),
+    ];
+
+    return [
+      charts.Series<BaseStats, String>(
+        id: 'Base Stats',
+        domainFn: (BaseStats baseStats, _) => baseStats.statName,
+        measureFn: (BaseStats baseStats, _) => baseStats.statValue,
+        data: data,
+        labelAccessorFn: (BaseStats baseStats, _) =>
+            '${baseStats.statValue}',
+//        '${baseStats.statName}: ${baseStats.statValue}',
+      )
+    ];
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return charts.BarChart(
+      getData(),
+      vertical: false,
+      barRendererDecorator: new charts.BarLabelDecorator<String>(),
+      primaryMeasureAxis:
+          new charts.NumericAxisSpec(renderSpec: new charts.NoneRenderSpec()),
+//       Hide domain axis.
+      domainAxis: new charts.OrdinalAxisSpec(
+        showAxisLine: false,
+      ),
+    );
+  }
+}
+
+class BaseStats {
+  final String statName;
+  final int statValue;
+
+  BaseStats(this.statName, this.statValue);
 }
 
 class AboutContainer extends StatelessWidget {
