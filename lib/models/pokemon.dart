@@ -20,8 +20,8 @@ class Pokemon {
     return Pokemon(
       id: parsedJson['id'],
       name: (parsedJson['name'] as String).inCaps,
-//      imageUrl: parsedJson['sprites']['other']['official-artwork']['front_default'],
-      imageUrl: parsedJson['sprites']['front_default'],
+      imageUrl: parsedJson['sprites']['other']['official-artwork']['front_default'],
+//      imageUrl: parsedJson['sprites']['front_default'],
       typeList: typeList,
     );
   }

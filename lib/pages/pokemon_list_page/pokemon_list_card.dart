@@ -171,17 +171,31 @@ class PokemonImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Hero(
-      tag: 'pokemonImageHero$_pokemonId',
-      child: CachedNetworkImage(
-        imageUrl: _imageUrl,
-        progressIndicatorBuilder: (context, url, downloadProgress) => Padding(
-          padding: const EdgeInsets.only(
-            bottom: 16.0,
-            right: 16.0,
+      tag: 'pokemonImage$_pokemonId',
+      child: Container(
+        width: 80,
+        height: 80,
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: CachedNetworkImageProvider(
+              _imageUrl
+            ),
           ),
-          child: CircularProgressIndicator(value: downloadProgress.progress),
         ),
-        errorWidget: (context, url, error) => Icon(Icons.error),
+//      child: Hero(
+//        tag: 'pokemonImageHero$_pokemonId',
+//      child: CachedNetworkImage(
+//        imageUrl: _imageUrl,
+//        progressIndicatorBuilder: (context, url, downloadProgress) => Padding(
+//          padding: const EdgeInsets.only(
+//            bottom: 16.0,
+//            right: 16.0,
+//          ),
+//          child: CircularProgressIndicator(value: downloadProgress.progress),
+//        ),
+//        errorWidget: (context, url, error) => Icon(Icons.error),
+//      ),
+//      ),
       ),
     );
 //    return Image.network(_imageUrl);
