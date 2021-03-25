@@ -10,6 +10,7 @@ class Pokemon {
   int weightInDecimeters;
   int baseExperience;
   PokemonBaseStats baseStats;
+  String speciesDetailsUrl;
 
   Pokemon({
     this.id,
@@ -21,6 +22,7 @@ class Pokemon {
     this.weightInDecimeters,
     this.baseExperience,
     this.baseStats,
+    this.speciesDetailsUrl
   });
 
   factory Pokemon.fromJson(Map<String, dynamic> parsedJson) {
@@ -44,6 +46,7 @@ class Pokemon {
       weightInDecimeters: parsedJson['weight'],
       baseExperience: parsedJson['base_experience'],
       baseStats: PokemonBaseStats.fromJson(parsedJson['stats']),
+      speciesDetailsUrl: parsedJson['species']['url'],
     );
   }
 

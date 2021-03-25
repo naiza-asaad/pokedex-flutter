@@ -11,7 +11,6 @@ class PokemonListPage extends StatefulWidget {
 }
 
 class _PokemonListPageState extends State<PokemonListPage> {
-  PokedexApiService _pokedexApiService = PokedexApiService();
   List<Pokemon> _pokemonList;
   bool isLoading = true;
 
@@ -62,9 +61,9 @@ class _PokemonListPageState extends State<PokemonListPage> {
   void fetchPokemonList() async {
     // simplePokemonList only contains the name and detailsUrl of each Pokemon.
     // We fetch the details (types, image, etc.) after fetching simplePokemonList.
-    final simplePokemonList = await _pokedexApiService.fetchPokemonList();
+    final simplePokemonList = await fetchPokemonListService();
     _pokemonList =
-        await _pokedexApiService.fetchPokemonDetailsList(simplePokemonList);
+        await fetchPokemonDetailsListService(simplePokemonList);
 
     setState(() {
       isLoading = false;

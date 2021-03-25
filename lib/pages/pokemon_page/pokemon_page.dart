@@ -1,6 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:pokedex/models/pokemon.dart';
+import 'package:pokedex/models/pokemon_evolution_chain.dart';
+import 'package:pokedex/services/pokedex_api_service.dart';
 import 'package:pokedex/utilities/color_utilities.dart';
 import 'package:pokedex/utilities/pokemon_color_picker.dart';
 import 'package:pokedex/utilities/string_extension.dart';
@@ -117,15 +119,7 @@ class CustomScaffold extends StatelessWidget {
                           children: [
                             AboutContainer(pokemon: pokemon),
                             BaseStatsContainer(baseStats: pokemon.baseStats),
-                            Center(
-                              child: Text(
-                                'Display Tab 3',
-                                style: TextStyle(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
+                            EvolutionContainer(speciesUrl: pokemon.speciesDetailsUrl),
                             Center(
                               child: Text(
                                 'Display Tab 4',
@@ -150,6 +144,55 @@ class CustomScaffold extends StatelessWidget {
         brightness: Brightness.light,
         primaryColor: primaryColor,
       ),
+    );
+  }
+}
+
+class EvolutionContainer extends StatefulWidget {
+  const EvolutionContainer({
+    Key key,
+    @required this.speciesUrl,
+  }) : super(key: key);
+
+  final String speciesUrl;
+
+  @override
+  _EvolutionContainerState createState() => _EvolutionContainerState();
+}
+
+class _EvolutionContainerState extends State<EvolutionContainer> {
+
+  bool isLoading = true;
+  PokemonEvolutionChain evolutionChain;
+
+  @override
+  void initState() {
+    fetchEvolutionChain();
+  }
+
+  void fetchEvolutionChain() async {
+    evolutionChain = await fetchPokemonEvolutionChainService(widget.speciesUrl);
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: isLoading ?
+        CircularProgressIndicator() :
+        Container(child: Text('Got the evolution chain')),
+//      child: FutureBuilder(
+//        future: null,
+//        builder: (context, snapshot) {
+//          if (snapshot.connectionState == ConnectionState.done) {
+//            return Container(child: Text('Test'));
+//          } else {
+//            return Center(child: CircularProgressIndicator());
+//          }
+//        }
+//      ),
     );
   }
 }
