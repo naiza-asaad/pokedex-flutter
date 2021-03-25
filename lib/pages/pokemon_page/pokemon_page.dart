@@ -33,7 +33,7 @@ class _PokemonPageState extends State<PokemonPage> {
   }
 }
 
-class CustomScaffold extends StatelessWidget {
+class CustomScaffold extends StatefulWidget {
   final Color primaryColor;
   final Pokemon pokemon;
 
@@ -43,48 +43,25 @@ class CustomScaffold extends StatelessWidget {
   });
 
   @override
+  _CustomScaffoldState createState() => _CustomScaffoldState();
+}
+
+class _CustomScaffoldState extends State<CustomScaffold> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Theme(
       child: Scaffold(
         appBar: AppBar(elevation: 0.0),
-        backgroundColor: primaryColor,
+        backgroundColor: widget.primaryColor,
         body: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.only(
-                top: 8.0,
-                bottom: 8.0,
-                left: 16.0,
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    flex: 2,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        PokemonName(name: pokemon.name),
-                        PokemonId(id: pokemon.id),
-                        PokemonTypeList(typeList: pokemon.typeList),
-                      ],
-                    ),
-                  ),
-                  Expanded(
-                    child: Hero(
-                      tag: 'pokemonImage${pokemon.imageUrl}',
-                      child: Container(
-                        width: 100,
-                        height: 100,
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: CachedNetworkImageProvider(pokemon.imageUrl),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+            PokemonPageHeader(
+              pokemon: widget.pokemon,
             ),
             Expanded(
               flex: 2,
@@ -117,18 +94,10 @@ class CustomScaffold extends StatelessWidget {
                       Expanded(
                         child: TabBarView(
                           children: [
-                            AboutContainer(pokemon: pokemon),
-                            BaseStatsContainer(baseStats: pokemon.baseStats),
-                            EvolutionContainer(speciesUrl: pokemon.speciesDetailsUrl),
-                            Center(
-                              child: Text(
-                                'Display Tab 4',
-                                style: TextStyle(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
+                            Center(child: Text('Tab 1')),
+                            Center(child: Text('Tab 2')),
+                            Center(child: Text('Tab 3')),
+                            Center(child: Text('Tab 4')),
                           ],
                         ),
                       ),
@@ -142,7 +111,161 @@ class CustomScaffold extends StatelessWidget {
       ),
       data: ThemeData(
         brightness: Brightness.light,
-        primaryColor: primaryColor,
+        primaryColor: widget.primaryColor,
+      ),
+    );
+  }
+
+//  @override
+//  Widget build(BuildContext context) {
+//    return Theme(
+//      child: Scaffold(
+//        appBar: AppBar(elevation: 0.0),
+//        backgroundColor: widget.primaryColor,
+//        body: Column(
+//          children: [
+//            Padding(
+//              padding: const EdgeInsets.only(
+//                top: 8.0,
+//                bottom: 8.0,
+//                left: 16.0,
+//              ),
+//              child: Row(
+//                children: [
+//                  Expanded(
+//                    flex: 2,
+//                    child: Column(
+//                      crossAxisAlignment: CrossAxisAlignment.start,
+//                      children: [
+//                        PokemonName(name: widget.pokemon.name),
+//                        PokemonId(id: widget.pokemon.id),
+//                        PokemonTypeList(typeList: widget.pokemon.typeList),
+//                      ],
+//                    ),
+//                  ),
+//                  Expanded(
+//                    child: Hero(
+//                      tag: 'pokemonImage${widget.pokemon.imageUrl}',
+//                      child: Container(
+//                        width: 100,
+//                        height: 100,
+//                        decoration: BoxDecoration(
+//                          image: DecorationImage(
+//                            image: CachedNetworkImageProvider(widget.pokemon.imageUrl),
+//                          ),
+//                        ),
+//                      ),
+//                    ),
+//                  ),
+//                ],
+//              ),
+//            ),
+//            Expanded(
+//              flex: 2,
+//              child: Container(
+//                height: MediaQuery.of(context).size.height / 2,
+//                padding: EdgeInsets.symmetric(horizontal: 5.0),
+//                decoration: BoxDecoration(
+//                  color: Colors.white,
+//                  borderRadius: BorderRadius.only(
+//                    topLeft: Radius.circular(20.0),
+//                    topRight: Radius.circular(20.0),
+//                  ),
+//                ),
+//                child: DefaultTabController(
+//                  length: 4,
+//                  initialIndex: 0,
+//                  child: Column(
+//                    children: [
+//                      Container(
+//                        child: TabBar(
+//                          labelColor: Colors.indigo,
+//                          tabs: [
+//                            Tab(text: 'About'),
+//                            Tab(text: 'Base Stats'),
+//                            Tab(text: 'Evolution'),
+//                            Tab(text: 'Moves'),
+//                          ],
+//                        ),
+//                      ),
+//                      Expanded(
+//                        child: TabBarView(
+//                          children: [
+//                            AboutContainer(pokemon: widget.pokemon),
+//                            BaseStatsContainer(baseStats: widget.pokemon.baseStats),
+//                            EvolutionContainer(speciesUrl: widget.pokemon.speciesDetailsUrl),
+//                            Center(
+//                              child: Text(
+//                                'Display Tab 4',
+//                                style: TextStyle(
+//                                  fontSize: 22,
+//                                  fontWeight: FontWeight.bold,
+//                                ),
+//                              ),
+//                            ),
+//                          ],
+//                        ),
+//                      ),
+//                    ],
+//                  ),
+//                ),
+//              ),
+//            ),
+//          ],
+//        ),
+//      ),
+//      data: ThemeData(
+//        brightness: Brightness.light,
+//        primaryColor: widget.primaryColor,
+//      ),
+//    );
+//  }
+}
+
+class PokemonPageHeader extends StatelessWidget {
+  const PokemonPageHeader({
+    Key key,
+    @required this.pokemon,
+  }) : super(key: key);
+
+  final Pokemon pokemon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(
+        top: 8.0,
+        bottom: 8.0,
+        left: 16.0,
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 2,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                PokemonName(name: pokemon.name),
+                PokemonId(id: pokemon.id),
+                PokemonTypeList(typeList: pokemon.typeList),
+              ],
+            ),
+          ),
+          Expanded(
+            child: Hero(
+              tag: 'pokemonImage${pokemon.imageUrl}',
+              child: Container(
+                width: 100,
+                height: 100,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: CachedNetworkImageProvider(pokemon.imageUrl),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -161,7 +284,6 @@ class EvolutionContainer extends StatefulWidget {
 }
 
 class _EvolutionContainerState extends State<EvolutionContainer> {
-
   bool isLoading = true;
   PokemonEvolutionChain evolutionChain;
 
@@ -180,9 +302,9 @@ class _EvolutionContainerState extends State<EvolutionContainer> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: isLoading ?
-        CircularProgressIndicator() :
-        Container(child: Text('Got the evolution chain')),
+      child: isLoading
+          ? CircularProgressIndicator()
+          : Container(child: Text('Got the evolution chain')),
 //      child: FutureBuilder(
 //        future: null,
 //        builder: (context, snapshot) {
@@ -221,8 +343,7 @@ class BaseStatsContainer extends StatelessWidget {
         domainFn: (BaseStats baseStats, _) => baseStats.statName,
         measureFn: (BaseStats baseStats, _) => baseStats.statValue,
         data: data,
-        labelAccessorFn: (BaseStats baseStats, _) =>
-            '${baseStats.statValue}',
+        labelAccessorFn: (BaseStats baseStats, _) => '${baseStats.statValue}',
 //        '${baseStats.statName}: ${baseStats.statValue}',
       )
     ];
@@ -411,9 +532,12 @@ class PokemonTypeList extends StatelessWidget {
         ),
       );
     } else {
-      return PokemonTypeName(
-        name: _typeList[0].type.name,
-        mainTypeName: _typeList[0].type.name,
+      return Padding(
+        padding: const EdgeInsets.only(top: 4.0),
+        child: PokemonTypeName(
+          name: _typeList[0].type.name,
+          mainTypeName: _typeList[0].type.name,
+        ),
       );
     }
   }
