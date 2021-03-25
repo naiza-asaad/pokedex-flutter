@@ -50,34 +50,58 @@ class CustomScaffold extends StatelessWidget {
               children: [
 //                Expanded(
                    Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 8.0,
-                      horizontal: 16.0,
+                    padding: const EdgeInsets.only(
+                      top: 8.0,
+                      bottom: 8.0,
+                      left: 16.0,
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    child: Row(
                       children: [
-                        PokemonName(name: pokemon.name),
-                        PokemonId(id: pokemon.id),
-                        PokemonTypeList(typeList: pokemon.typeList),
+                        Expanded(
+                          flex: 2,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              PokemonName(name: pokemon.name),
+                              PokemonId(id: pokemon.id),
+                              PokemonTypeList(typeList: pokemon.typeList),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          child: Hero(
+                            tag: 'pokemonImage${pokemon.imageUrl}',
+                            child: Container(
+                              width: 100,
+                              height: 100,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: CachedNetworkImageProvider(
+                                      pokemon.imageUrl
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
 //                ),
-                Expanded(
-                  child: Hero(
-                    tag: 'pokemonImage${pokemon.imageUrl}',
-                    child: Container(
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: CachedNetworkImageProvider(
-                            pokemon.imageUrl
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+//                Expanded(
+//                  child: Hero(
+//                    tag: 'pokemonImage${pokemon.imageUrl}',
+//                    child: Container(
+//                      decoration: BoxDecoration(
+//                        image: DecorationImage(
+//                          image: CachedNetworkImageProvider(
+//                            pokemon.imageUrl
+//                          ),
+//                        ),
+//                      ),
+//                    ),
+//                  ),
+//                ),
 //                  child: Hero(
 //                    tag: 'pokemonImageHero${pokemon.id}',
 //                    child: Image.network(
@@ -203,15 +227,12 @@ class PokemonId extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.centerRight,
-      child: Text(
-        '#${_formatPokemonId(id)}',
-        style: TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
-          fontSize: 16.0,
-        ),
+    return Text(
+      '#${_formatPokemonId(id)}',
+      style: TextStyle(
+        color: Colors.white,
+        fontWeight: FontWeight.bold,
+        fontSize: 16.0,
       ),
     );
   }
@@ -238,17 +259,20 @@ class PokemonTypeList extends StatelessWidget {
   Widget build(BuildContext context) {
     if (_typeList.length > 1) {
       // Pokemon has 2 types
-      return Row(
-        children: [
-          PokemonTypeName(
-            name: _typeList[0].type.name,
-            mainTypeName: _typeList[0].type.name,
-          ),
-          PokemonTypeName(
-            name: _typeList[1].type.name,
-            mainTypeName: _typeList[0].type.name,
-          ),
-        ],
+      return Padding(
+        padding: const EdgeInsets.only(top: 4.0),
+        child: Row(
+          children: [
+            PokemonTypeName(
+              name: _typeList[0].type.name,
+              mainTypeName: _typeList[0].type.name,
+            ),
+            PokemonTypeName(
+              name: _typeList[1].type.name,
+              mainTypeName: _typeList[0].type.name,
+            ),
+          ],
+        ),
       );
     } else {
       return PokemonTypeName(
