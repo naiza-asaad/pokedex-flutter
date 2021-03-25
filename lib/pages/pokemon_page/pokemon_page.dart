@@ -45,152 +45,189 @@ class CustomScaffold extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(elevation: 0.0),
         backgroundColor: primaryColor,
-        body:
-            Column(
-              children: [
-//                Expanded(
-                   Padding(
-                    padding: const EdgeInsets.only(
-                      top: 8.0,
-                      bottom: 8.0,
-                      left: 16.0,
-                    ),
-                    child: Row(
+        body: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(
+                top: 8.0,
+                bottom: 8.0,
+                left: 16.0,
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    flex: 2,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Expanded(
-                          flex: 2,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              PokemonName(name: pokemon.name),
-                              PokemonId(id: pokemon.id),
-                              PokemonTypeList(typeList: pokemon.typeList),
-                            ],
-                          ),
-                        ),
-                        Expanded(
-                          child: Hero(
-                            tag: 'pokemonImage${pokemon.imageUrl}',
-                            child: Container(
-                              width: 100,
-                              height: 100,
-                              decoration: BoxDecoration(
-                                image: DecorationImage(
-                                  image: CachedNetworkImageProvider(
-                                      pokemon.imageUrl
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
+                        PokemonName(name: pokemon.name),
+                        PokemonId(id: pokemon.id),
+                        PokemonTypeList(typeList: pokemon.typeList),
                       ],
                     ),
                   ),
-//                ),
-//                Expanded(
-//                  child: Hero(
-//                    tag: 'pokemonImage${pokemon.imageUrl}',
-//                    child: Container(
-//                      decoration: BoxDecoration(
-//                        image: DecorationImage(
-//                          image: CachedNetworkImageProvider(
-//                            pokemon.imageUrl
-//                          ),
-//                        ),
-//                      ),
-//                    ),
-//                  ),
-//                ),
-//                  child: Hero(
-//                    tag: 'pokemonImageHero${pokemon.id}',
-//                    child: Image.network(
-//                      pokemon.imageUrl,
-//                      scale: 0.1,
-//                    ),
-//                  ),
-//                ),
-                Expanded(
-                  flex: 2,
-                  child: Container(
-                    height: MediaQuery.of(context).size.height / 2,
-                    padding: EdgeInsets.symmetric(horizontal: 5.0),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(20.0),
-                        topRight: Radius.circular(20.0),
-                      ),
-                    ),
-                    child: DefaultTabController(
-                      length: 4,
-                      initialIndex: 0,
-                      child: Column(
-                        children: [
-                          Container(
-                            child: TabBar(
-                              labelColor: Colors.indigo,
-                              tabs: [
-                                Tab(text: 'About'),
-                                Tab(text: 'Base Stats'),
-                                Tab(text: 'Evolution'),
-                                Tab(text: 'Moves'),
-                              ],
-                            ),
+                  Expanded(
+                    child: Hero(
+                      tag: 'pokemonImage${pokemon.imageUrl}',
+                      child: Container(
+                        width: 100,
+                        height: 100,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: CachedNetworkImageProvider(pokemon.imageUrl),
                           ),
-                          Expanded(
-                            child: TabBarView(
-                              children: [
-                                Center(
-                                  child: Text(
-                                    'Display Tab 1',
-                                    style: TextStyle(
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                                Center(
-                                  child: Text(
-                                    'Display Tab 2',
-                                    style: TextStyle(
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                                Center(
-                                  child: Text(
-                                    'Display Tab 3',
-                                    style: TextStyle(
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                                Center(
-                                  child: Text(
-                                    'Display Tab 4',
-                                    style: TextStyle(
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
+            Expanded(
+              flex: 2,
+              child: Container(
+                height: MediaQuery.of(context).size.height / 2,
+                padding: EdgeInsets.symmetric(horizontal: 5.0),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20.0),
+                    topRight: Radius.circular(20.0),
+                  ),
+                ),
+                child: DefaultTabController(
+                  length: 4,
+                  initialIndex: 0,
+                  child: Column(
+                    children: [
+                      Container(
+                        child: TabBar(
+                          labelColor: Colors.indigo,
+                          tabs: [
+                            Tab(text: 'About'),
+                            Tab(text: 'Base Stats'),
+                            Tab(text: 'Evolution'),
+                            Tab(text: 'Moves'),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: TabBarView(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: GridView.count(
+                                childAspectRatio: 5,
+                                crossAxisCount: 2,
+                                children: [
+                                  AboutGridLabel(label: 'Height'),
+                                  AboutGridValue(value: '${pokemon.heightInDecimeters}m'),
+
+                                  AboutGridLabel(label: 'Weight'),
+                                  AboutGridValue(value: '${pokemon.weightInDecimeters}kg'),
+
+                                  AboutGridLabel(label: 'Abilities'),
+                                  AboutGridValue(value: getAbilitiesString()),
+
+                                  AboutGridLabel(label: 'Base Experience'),
+                                  AboutGridValue(value: '${pokemon.baseExperience} xp'),
+                                ],
+                              ),
+                            ),
+                            Center(
+                              child: Text(
+                                'Display Tab 2',
+                                style: TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            Center(
+                              child: Text(
+                                'Display Tab 3',
+                                style: TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            Center(
+                              child: Text(
+                                'Display Tab 4',
+                                style: TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
       data: ThemeData(
         brightness: Brightness.light,
         primaryColor: primaryColor,
+      ),
+    );
+  }
+
+  String getAbilitiesString() {
+    print('test');
+    var concatenated = StringBuffer();
+    final abilityList = pokemon.abilityList;
+    for (var i = 0; i < abilityList.length; ++i) {
+      concatenated.write(abilityList[i].name);
+      if (i < abilityList.length - 1) {
+        concatenated.write(', ');
+      }
+    }
+    return concatenated.toString();
+    print('/');
+  }
+}
+
+class AboutGridValue extends StatelessWidget {
+  const AboutGridValue({
+    Key key,
+    @required this.value,
+  }) : super(key: key);
+
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      value,
+      style: TextStyle(
+        fontSize: 24.0,
+      ),
+    );
+  }
+}
+
+class AboutGridLabel extends StatelessWidget {
+  const AboutGridLabel({
+    Key key,
+    @required this.label,
+  }) : super(key: key);
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      label,
+      style: TextStyle(
+        fontSize: 24.0,
+        color: Colors.blueGrey,
       ),
     );
   }
