@@ -5,7 +5,7 @@ import 'package:pokedex/services/pokedex_api_helper.dart';
 import 'package:pokedex/utilities/string_extension.dart';
 
 Future<SimplePokemonList> fetchPokemonListService(
-    {int offset = 130, int limit = 20}) async {
+    {int offset = 0, int limit = 20}) async {
   SimplePokemonList pokemonList =
       await fetchPokemonListFromApi(limit: limit, offset: offset);
   return pokemonList;

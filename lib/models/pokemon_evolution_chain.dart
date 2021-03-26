@@ -1,20 +1,20 @@
 
 class PokemonEvolutionChain {
-  EvolvesTo evolutionChain;
+  EvolvesTo chain;
 
   PokemonEvolutionChain({
-    this.evolutionChain,
+    this.chain,
   });
 
   factory PokemonEvolutionChain.fromJson(Map<String, dynamic> parsedJson) {
     return PokemonEvolutionChain(
-      evolutionChain: EvolvesTo.fromJson(parsedJson['chain']),
+      chain: EvolvesTo.fromJson(parsedJson['chain']),
     );
   }
 
   @override
   String toString() {
-    return 'evolution chain = $evolutionChain';
+    return 'evolution chain = $chain';
   }
 }
 

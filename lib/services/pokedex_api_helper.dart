@@ -9,7 +9,12 @@ const String _baseUrl = 'https://pokeapi.co/api/v2';
 Future<SimplePokemonList> fetchPokemonListFromApi(
     {int offset = 0, int limit = 20}) async {
   try {
-    final fetchUrl = '$_baseUrl/pokemon';
+//    final fetchUrl = '$_baseUrl/pokemon';
+//    final fetchUrl = '$_baseUrl/pokemon?offset=438&limit=10'; // mime jr
+    final fetchUrl = '$_baseUrl/pokemon?offset=279&limit=10'; // ralts
+//    final fetchUrl = '$_baseUrl/pokemon?offset=132&limit=10'; // eevee
+//    final fetchUrl = '$_baseUrl/pokemon?offset=264&limit=10'; // wurmple
+//    final fetchUrl = '$_baseUrl/pokemon?offset=230&limit=10'; // hitmonlee
     final response = await Dio().get(fetchUrl);
     final pokemonList = SimplePokemonList.fromJson(response.data);
 
@@ -45,17 +50,33 @@ Future<List<Pokemon>> fetchPokemonDetailsListFromApi(
 
 Future<Pokemon> fetchPokemonDetailsFromApi({String name, int id}) async {
   try {
-    final fetchUrl = (name != null && name.isNotEmpty)
+    // Fetch pokemon details.
+    final fetchPokemonUrl = (name != null && name.isNotEmpty)
         ? '$_baseUrl/pokemon/$name'
         : '$_baseUrl/pokemon/$id';
 
-    final pokemonResponse = await Dio().get(fetchUrl);
-    var pokemon = Pokemon.fromJson(pokemonResponse.data);
-
     // Fetch species details.
-    final speciesResponse = await Dio().get(pokemon.speciesDetailsUrl);
-    final species = PokemonSpecies.fromJson(speciesResponse.data);
-    pokemon.species = species;
+    final fetchSpeciesUrl = (name != null && name.isNotEmpty)
+        ? '$_baseUrl/pokemon-species/$name'
+        : '$_baseUrl/pokemon-species/$id';
+
+    //
+    List<Future<Response>> futureResponses = [];
+    futureResponses.addAll([
+      Dio().get(fetchPokemonUrl),
+      Dio().get(fetchSpeciesUrl),
+    ]);
+    List<Response> responses = await Future.wait(futureResponses);
+    final pokemon = Pokemon.fromJson(responses[0].data);
+    final species = PokemonSpecies.fromJson(responses[1].data);
+    //
+
+//    final pokemonResponse = await Dio().get(fetchPokemonUrl);
+//    var pokemon = Pokemon.fromJson(pokemonResponse.data);
+//
+//    final speciesResponse = await Dio().get(fetchSpeciesUrl);
+//    final species = PokemonSpecies.fromJson(speciesResponse.data);
+//    pokemon.species = species;
 
     // Fetch evolution chain details
     final evolutionChainResponse = await Dio().get(species.evolutionChainUrl);
