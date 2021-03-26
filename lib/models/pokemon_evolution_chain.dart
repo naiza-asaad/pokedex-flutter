@@ -21,6 +21,7 @@ class PokemonEvolutionChain {
 class EvolvesTo {
   String speciesName;
   List<EvolvesTo> evolutions;
+  String imageUrl;
 
   EvolvesTo({
     this.speciesName,
@@ -46,5 +47,31 @@ class EvolvesTo {
   @override
   String toString() {
     return 'species name=$speciesName';
+  }
+}
+
+class PokemonEvolutionChainV2 {
+  EvolvesTo basePokemon;
+  List<EvolvesTo> stage2Evolutions;
+  List<EvolvesTo> stage3Evolutions;
+  bool hasStage2Evolutions;
+  bool hasStage3Evolutions;
+
+
+  PokemonEvolutionChainV2(PokemonEvolutionChain chain) {
+    stage2Evolutions = chain.chain.evolutions;
+    hasStage2Evolutions =
+        stage2Evolutions != null && stage2Evolutions.isNotEmpty;
+
+    hasStage3Evolutions = hasStage2Evolutions &&
+        stage2Evolutions[0].evolutions != null &&
+        stage2Evolutions[0].evolutions.isNotEmpty;
+    if (hasStage3Evolutions) {
+      for (var evolution in stage2Evolutions) {
+        for (var stage3Evolution in evolution.evolutions) {
+          stage3Evolutions.add(stage3Evolution);
+        }
+      }
+    }
   }
 }

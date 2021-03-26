@@ -262,73 +262,74 @@ class _EvolutionChainContainerState extends State<EvolutionChainContainer> {
 
     // Row 1
     // Column 1
-    children.add(EvolutionCard(pokemonName: ''));
+    children.add(EvolutionCard());
 
     // Column 2
     if (hasStage2Evolutions && stage2Evolutions.length == 2) {
-      children.add(EvolutionCard(pokemonName: stage2Evolutions[0].speciesName));
+      children.add(EvolutionCard(species: stage2Evolutions[0]));
     } else {
-      children.add(EvolutionCard(pokemonName: ''));
+      children.add(EvolutionCard());
     }
 
     // Column 3
     if (hasStage3Evolutions && stage3Evolutions.length == 2) {
-      children.add(EvolutionCard(pokemonName: stage3Evolutions[0].speciesName));
+      children.add(EvolutionCard(species: stage3Evolutions[0]));
     } else if (hasStage2Evolutions && stage2Evolutions.length == 3) {
-      children.add(EvolutionCard(pokemonName: stage2Evolutions[0].speciesName));
+      children.add(EvolutionCard(species: stage2Evolutions[0]));
     } else {
-      children.add(EvolutionCard(pokemonName: ''));
+      children.add(EvolutionCard());
     }
 
     // Row 2
-    if (hasStage2Evolutions) { // base pokemon
-      children.add(EvolutionCard(pokemonName: evolutionChain.chain.speciesName));
+    if (hasStage2Evolutions) {
+      // base pokemon
+      children.add(EvolutionCard(species: evolutionChain.chain));
     } else {
-      children.add(EvolutionCard(pokemonName: ''));
+      children.add(EvolutionCard());
     }
 
     // Column 2
     if (hasStage2Evolutions &&
         stage2Evolutions.length == 1 &&
         hasStage3Evolutions) {
-      children.add(EvolutionCard(pokemonName: stage2Evolutions[0].speciesName));
+      children.add(EvolutionCard(species: stage2Evolutions[0]));
     } else if (!hasStage2Evolutions && !hasStage3Evolutions) {
-      children.add(EvolutionCard(pokemonName: evolutionChain.chain.speciesName));
+      children.add(EvolutionCard(species: evolutionChain.chain));
     } else {
-      children.add(EvolutionCard(pokemonName: ''));
+      children.add(EvolutionCard());
     }
 
     // Column 3
     if (hasStage3Evolutions && stage3Evolutions.length == 1) {
-      children.add(EvolutionCard(pokemonName: stage3Evolutions[0].speciesName));
+      children.add(EvolutionCard(species: stage3Evolutions[0]));
     } else if (hasStage2Evolutions && stage2Evolutions.length == 3) {
-      children.add(EvolutionCard(pokemonName: stage2Evolutions[1].speciesName));
+      children.add(EvolutionCard(species: stage2Evolutions[1]));
     } else if (hasStage2Evolutions &&
         !hasStage3Evolutions &&
         stage2Evolutions.length == 1) {
-      children.add(EvolutionCard(pokemonName: stage2Evolutions[0].speciesName));
+      children.add(EvolutionCard(species: stage2Evolutions[0]));
     } else {
-      children.add(EvolutionCard(pokemonName: ''));
+      children.add(EvolutionCard());
     }
 
     // Row 3
     // Column 1
-    children.add(EvolutionCard(pokemonName: ''));
+    children.add(EvolutionCard());
 
     // Column 2
     if (hasStage3Evolutions && stage2Evolutions.length == 2) {
-      children.add(EvolutionCard(pokemonName: stage2Evolutions[1].speciesName));
+      children.add(EvolutionCard(species: stage2Evolutions[1]));
     } else {
-      children.add(EvolutionCard(pokemonName: ''));
+      children.add(EvolutionCard());
     }
 
     // Column 3
     if (hasStage3Evolutions && stage3Evolutions.length == 2) {
-      children.add(EvolutionCard(pokemonName: stage3Evolutions[1].speciesName));
+      children.add(EvolutionCard(species: stage3Evolutions[1]));
     } else if (hasStage2Evolutions && stage2Evolutions.length == 3) {
-      children.add(EvolutionCard(pokemonName: stage2Evolutions[2].speciesName));
+      children.add(EvolutionCard(species: stage2Evolutions[2]));
     } else {
-      children.add(EvolutionCard(pokemonName: ''));
+      children.add(EvolutionCard());
     }
 
     return children;
@@ -338,41 +339,43 @@ class _EvolutionChainContainerState extends State<EvolutionChainContainer> {
 class EvolutionCard extends StatelessWidget {
   const EvolutionCard({
     Key key,
-    @required this.pokemonName,
-    @required this.pokemonId,
+    @required this.species,
     this.isHidden,
   }) : super(key: key);
 
-  final String pokemonName;
-  final String pokemonId;
+  final EvolvesTo species;
   final bool isHidden;
 
   @override
   Widget build(BuildContext context) {
-    return pokemonName.isNotEmpty ? Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.blueAccent),
-        borderRadius: BorderRadius.all(Radius.circular(5.0)),
-      ),
-      padding: EdgeInsets.symmetric(vertical: 32.0, horizontal: 8.0),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(pokemonName),
-          Text(''),
-        ],
-      ),
-    ) :
-    Container(
-      padding: EdgeInsets.symmetric(vertical: 32.0, horizontal: 8.0),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(pokemonName),
-          Text(''),
-        ],
-      ),
-    );
+    if (species != null) {
+      print('name=${species.speciesName},imageUrl=${species.imageUrl}');
+    }
+    return species != null
+        ? Container(
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.blueAccent),
+              borderRadius: BorderRadius.all(Radius.circular(5.0)),
+            ),
+            padding: EdgeInsets.symmetric(vertical: 32.0, horizontal: 8.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(species.speciesName),
+                Text(''),
+              ],
+            ),
+          )
+        : Container(
+            padding: EdgeInsets.symmetric(vertical: 32.0, horizontal: 8.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(''),
+                Text(''),
+              ],
+            ),
+          );
   }
 }
 
