@@ -37,33 +37,52 @@ Future<List<Pokemon>> fetchPokemonDetailsListFromApi(
     pokemonDetailsList
         .sort((pokemonA, pokemonB) => pokemonA.id.compareTo(pokemonB.id));
 
-    print('pokemon details');
-    print(pokemonDetailsList);
-
     return pokemonDetailsList;
   } catch (e) {
     print(e);
   }
 }
 
-Future<PokemonEvolutionChain> fetchPokemonEvolutionChainFromApi(String speciesUrl) async {
+Future<Pokemon> fetchPokemonDetailsFromApi({String name, int id}) async {
   try {
-    print('harro');
-    print(speciesUrl);
-    final speciesResponse = await Dio().get(speciesUrl);
-    PokemonSpecies pokemonSpecies = PokemonSpecies.fromJson(speciesResponse.data);
-    print(pokemonSpecies);
+    final fetchUrl = (name != null && name.isNotEmpty)
+        ? '$_baseUrl/pokemon/$name'
+        : '$_baseUrl/pokemon/$id';
 
-    print('erow');
+    final pokemonResponse = await Dio().get(fetchUrl);
+    var pokemon = Pokemon.fromJson(pokemonResponse.data);
+
+    // Fetch species details.
+    final speciesResponse = await Dio().get(pokemon.speciesDetailsUrl);
+    final species = PokemonSpecies.fromJson(speciesResponse.data);
+    pokemon.species = species;
+
+    // Fetch evolution chain details
+    final evolutionChainResponse = await Dio().get(species.evolutionChainUrl);
+    final evolutionChain = PokemonEvolutionChain.fromJson(evolutionChainResponse.data);
+    pokemon.evolutionChain = evolutionChain;
+
+    return pokemon;
+  } catch (e) {
+    print(e);
+  }
+}
+
+Future<PokemonEvolutionChain> fetchPokemonEvolutionChainFromApi(
+    String speciesUrl) async {
+  try {
+    final speciesResponse = await Dio().get(speciesUrl);
+    PokemonSpecies pokemonSpecies =
+        PokemonSpecies.fromJson(speciesResponse.data);
+
     final evolutionResponse = await Dio().get(pokemonSpecies.evolutionChainUrl);
-    PokemonEvolutionChain evolutionChain = PokemonEvolutionChain.fromJson(evolutionResponse.data);
-    print(evolutionChain);
+    PokemonEvolutionChain evolutionChain =
+        PokemonEvolutionChain.fromJson(evolutionResponse.data);
 
     return evolutionChain;
   } catch (e) {
     print(e);
   }
-
 }
 
 Future<List<Response>> _fetchPokemonDetailsResponses(

@@ -7,7 +7,6 @@ class PokemonEvolutionChain {
   });
 
   factory PokemonEvolutionChain.fromJson(Map<String, dynamic> parsedJson) {
-    print('did i make it here?');
     return PokemonEvolutionChain(
       evolutionChain: EvolvesTo.fromJson(parsedJson['chain']),
     );

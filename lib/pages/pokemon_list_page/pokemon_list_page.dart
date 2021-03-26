@@ -92,7 +92,7 @@ class _PokemonListPageState extends State<PokemonListPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (isLoading)
-              Center(child: CircularProgressIndicator())
+              Expanded(child: Center(child: CircularProgressIndicator()))
             else
               Expanded(
                 child: GridView.builder(

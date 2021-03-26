@@ -47,9 +47,13 @@ class CustomScaffold extends StatefulWidget {
 }
 
 class _CustomScaffoldState extends State<CustomScaffold> {
+  Future<Pokemon> futurePokemon;
+
   @override
   void initState() {
     super.initState();
+
+    futurePokemon = fetchPokemonDetailsService(name: widget.pokemon.name);
   }
 
   @override
@@ -75,34 +79,44 @@ class _CustomScaffoldState extends State<CustomScaffold> {
                     topRight: Radius.circular(20.0),
                   ),
                 ),
-                child: DefaultTabController(
-                  length: 4,
-                  initialIndex: 0,
-                  child: Column(
-                    children: [
-                      Container(
-                        child: TabBar(
-                          labelColor: Colors.indigo,
-                          tabs: [
-                            Tab(text: 'About'),
-                            Tab(text: 'Base Stats'),
-                            Tab(text: 'Evolution'),
-                            Tab(text: 'Moves'),
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        child: TabBarView(
+                child: FutureBuilder<Pokemon>(
+                  future: futurePokemon,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return DefaultTabController(
+                        length: 4,
+                        initialIndex: 0,
+                        child: Column(
                           children: [
-                            Center(child: Text('Tab 1')),
-                            Center(child: Text('Tab 2')),
-                            Center(child: Text('Tab 3')),
-                            Center(child: Text('Tab 4')),
+                            Container(
+                              child: TabBar(
+                                labelColor: Colors.indigo,
+                                tabs: [
+                                  Tab(text: 'About'),
+                                  Tab(text: 'Base Stats'),
+                                  Tab(text: 'Evolution'),
+                                  Tab(text: 'Moves'),
+                                ],
+                              ),
+                            ),
+                            Expanded(
+                              child: TabBarView(
+                                children: [
+                                  AboutContainer(pokemon: snapshot.data),
+                                  BaseStatsContainer(baseStats: snapshot.data.baseStats),
+                                  Center(child: Text('Tab 3')),
+                                  Center(child: Text('Tab 4')),
+                                ],
+                              ),
+                            ),
                           ],
                         ),
-                      ),
-                    ],
-                  ),
+                      );
+                    } else if (snapshot.hasError) {
+                      return Text('${snapshot.error}');
+                    }
+                    return Center(child: CircularProgressIndicator());
+                  },
                 ),
               ),
             ),

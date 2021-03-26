@@ -1,3 +1,5 @@
+import 'package:pokedex/models/pokemon_evolution_chain.dart';
+import 'package:pokedex/models/pokemon_species.dart';
 import 'package:pokedex/utilities/string_extension.dart';
 
 class Pokemon {
@@ -11,6 +13,9 @@ class Pokemon {
   int baseExperience;
   PokemonBaseStats baseStats;
   String speciesDetailsUrl;
+
+  PokemonSpecies species;
+  PokemonEvolutionChain evolutionChain;
 
   Pokemon({
     this.id,

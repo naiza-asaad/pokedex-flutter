@@ -1,7 +1,8 @@
+import 'package:pokedex/models/pokemon.dart';
 import 'package:pokedex/models/pokemon_evolution_chain.dart';
 import 'package:pokedex/models/simple_pokemon_list.dart';
-import 'package:pokedex/models/pokemon.dart';
 import 'package:pokedex/services/pokedex_api_helper.dart';
+import 'package:pokedex/utilities/string_extension.dart';
 
 Future<SimplePokemonList> fetchPokemonListService(
     {int offset = 130, int limit = 20}) async {
@@ -19,4 +20,9 @@ Future<List<Pokemon>> fetchPokemonDetailsListService(
 
 Future<PokemonEvolutionChain> fetchPokemonEvolutionChainService(String speciesUrl) async {
   return await fetchPokemonEvolutionChainFromApi(speciesUrl);
+}
+
+Future<Pokemon> fetchPokemonDetailsService({String name, int id}) async {
+  final formattedName = name.inSmallCaps;
+  return await fetchPokemonDetailsFromApi(name: formattedName, id: id);
 }
