@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/material.dart';
@@ -81,6 +79,178 @@ class _CustomScaffoldState extends State<CustomScaffold> {
   }
 }
 
+class PokemonPageHeader extends StatelessWidget {
+  const PokemonPageHeader({
+    Key key,
+    @required this.pokemon,
+  }) : super(key: key);
+
+  final Pokemon pokemon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(
+        top: 8.0,
+        bottom: 8.0,
+        left: 16.0,
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 2,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                PokemonName(name: pokemon.name),
+                PokemonId(id: pokemon.id),
+                PokemonTypeList(typeList: pokemon.typeList),
+              ],
+            ),
+          ),
+          Expanded(
+            child: Hero(
+              tag: 'pokemonImage${pokemon.imageUrl}',
+              child: Container(
+                width: 100,
+                height: 100,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: CachedNetworkImageProvider(pokemon.imageUrl),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class PokemonName extends StatelessWidget {
+  const PokemonName({
+    Key key,
+    @required this.name,
+  }) : super(key: key);
+
+  final String name;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      name,
+      style: TextStyle(
+        color: Colors.white,
+        fontWeight: FontWeight.bold,
+        fontSize: 32.0,
+      ),
+    );
+  }
+}
+
+class PokemonId extends StatelessWidget {
+  const PokemonId({
+    Key key,
+    @required this.id,
+  }) : super(key: key);
+
+  final int id;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      '#${formatPokemonId(id)}',
+      style: TextStyle(
+        color: Colors.white,
+        fontWeight: FontWeight.bold,
+        fontSize: 16.0,
+      ),
+    );
+  }
+}
+
+class PokemonTypeList extends StatelessWidget {
+  const PokemonTypeList({
+    Key key,
+    @required List<PokemonType> typeList,
+  })  : _typeList = typeList,
+        super(key: key);
+
+  final List<PokemonType> _typeList;
+
+  @override
+  Widget build(BuildContext context) {
+    if (_typeList.length > 1) {
+      // Pokemon has 2 types
+      return Padding(
+        padding: const EdgeInsets.only(top: 4.0),
+        child: Row(
+          children: [
+            PokemonTypeName(
+              name: _typeList[0].type.name,
+              mainTypeName: _typeList[0].type.name,
+            ),
+            PokemonTypeName(
+              name: _typeList[1].type.name,
+              mainTypeName: _typeList[0].type.name,
+            ),
+          ],
+        ),
+      );
+    } else {
+      return Padding(
+        padding: const EdgeInsets.only(top: 4.0),
+        child: PokemonTypeName(
+          name: _typeList[0].type.name,
+          mainTypeName: _typeList[0].type.name,
+        ),
+      );
+    }
+  }
+}
+
+class PokemonTypeName extends StatelessWidget {
+  const PokemonTypeName({
+    Key key,
+    @required String name,
+    @required String mainTypeName,
+  })  : _name = name,
+        _mainTypeName = mainTypeName,
+        super(key: key);
+
+  final String _name;
+  final String _mainTypeName;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(
+        vertical: 4.0,
+        horizontal: 12.0,
+      ),
+      margin: EdgeInsets.only(right: 8.0),
+      decoration: BoxDecoration(
+        color: lighten(PokemonColorPicker.getColor(_mainTypeName)),
+        border: Border.all(
+          color: Colors.transparent,
+        ),
+        borderRadius: BorderRadius.all(
+          Radius.circular(20),
+        ),
+      ),
+      child: Text(
+        _name.inCaps,
+        style: TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+          fontSize: 14.0,
+        ),
+      ),
+    );
+  }
+}
+
 class PokemonPageDetails extends StatelessWidget {
   const PokemonPageDetails({
     Key key,
@@ -149,6 +319,140 @@ class PokemonPageDetails extends StatelessWidget {
   }
 }
 
+class AboutContainer extends StatelessWidget {
+  const AboutContainer({
+    Key key,
+    @required this.pokemon,
+  }) : super(key: key);
+
+  final Pokemon pokemon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: GridView.count(
+        childAspectRatio: 5,
+        crossAxisCount: 2,
+        children: [
+          AboutGridLabel(label: 'Height'),
+          AboutGridValue(value: '${pokemon.heightInDecimeters} m'),
+          AboutGridLabel(label: 'Weight'),
+          AboutGridValue(value: '${pokemon.weightInDecimeters} kg'),
+          AboutGridLabel(label: 'Abilities'),
+          AboutGridValue(value: getAbilitiesString()),
+          AboutGridLabel(label: 'Base Experience'),
+          AboutGridValue(value: '${pokemon.baseExperience} xp'),
+        ],
+      ),
+    );
+  }
+
+  String getAbilitiesString() {
+    var concatenated = StringBuffer();
+    final abilityList = pokemon.abilityList;
+    for (var i = 0; i < abilityList.length; ++i) {
+      concatenated.write(abilityList[i].name);
+      if (i < abilityList.length - 1) {
+        concatenated.write(', ');
+      }
+    }
+    return concatenated.toString();
+  }
+}
+
+class AboutGridValue extends StatelessWidget {
+  const AboutGridValue({
+    Key key,
+    @required this.value,
+  }) : super(key: key);
+
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      value,
+      style: TextStyle(
+        fontSize: 24.0,
+      ),
+    );
+  }
+}
+
+class AboutGridLabel extends StatelessWidget {
+  const AboutGridLabel({
+    Key key,
+    @required this.label,
+  }) : super(key: key);
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      label,
+      style: TextStyle(
+        fontSize: 24.0,
+        color: Colors.blueGrey,
+      ),
+    );
+  }
+}
+
+class BaseStats {
+  final String statName;
+  final int statValue;
+
+  BaseStats(this.statName, this.statValue);
+}
+
+class BaseStatsContainer extends StatelessWidget {
+  const BaseStatsContainer({
+    Key key,
+    @required this.baseStats,
+  }) : super(key: key);
+
+  final PokemonBaseStats baseStats;
+
+  List<charts.Series<BaseStats, String>> getData() {
+    final data = [
+      BaseStats('HP', baseStats.hp),
+      BaseStats('Attack', baseStats.attack),
+      BaseStats('Defense', baseStats.defense),
+      BaseStats('Sp-Atk', baseStats.specialAttack),
+      BaseStats('Sp-Def', baseStats.specialDefense),
+      BaseStats('Speed', baseStats.speed),
+    ];
+
+    return [
+      charts.Series<BaseStats, String>(
+        id: 'Base Stats',
+        domainFn: (BaseStats baseStats, _) => baseStats.statName,
+        measureFn: (BaseStats baseStats, _) => baseStats.statValue,
+        data: data,
+        labelAccessorFn: (BaseStats baseStats, _) => '${baseStats.statValue}',
+//        '${baseStats.statName}: ${baseStats.statValue}',
+      )
+    ];
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return charts.BarChart(
+      getData(),
+      vertical: false,
+      barRendererDecorator: new charts.BarLabelDecorator<String>(),
+      primaryMeasureAxis:
+          new charts.NumericAxisSpec(renderSpec: new charts.NoneRenderSpec()),
+//       Hide domain axis.
+      domainAxis: new charts.OrdinalAxisSpec(
+        showAxisLine: false,
+      ),
+    );
+  }
+}
+
 class EvolutionChainContainer extends StatefulWidget {
   const EvolutionChainContainer({
     Key key,
@@ -173,59 +477,10 @@ class _EvolutionChainContainerState extends State<EvolutionChainContainer> {
 
   @override
   Widget build(BuildContext context) {
-//    // 1st pokemon
-//    final basePokemon = widget.evolutionChain.chain.speciesName;
-//    print('1st pokemon=$basePokemon');
-//
-//    // evolution/s of 1st pokemon
-//    final stage2Evolutions = widget.evolutionChain.chain.evolutions;
-//    final hasStage2Evolutions = stage2Evolutions != null && stage2Evolutions.isNotEmpty;
-//    for (var evolution in stage2Evolutions) {
-//      print(evolution.speciesName);
-//    }
-//
-//    final hasStage3Evolutions = hasStage2Evolutions && stage2Evolutions[0].evolutions.isNotEmpty;
-//    final stage3Evolutions = [];
-//    if (hasStage3Evolutions) {
-//      for (var evolution in stage2Evolutions) {
-//        print(evolution.speciesName);
-//        for (var stage3Evolution in evolution.evolutions) {
-//          stage3Evolutions.add(stage3Evolution);
-//          print(stage3Evolution.speciesName);
-//        }
-//      }
-//    }
     return GridView.count(
       crossAxisCount: 3,
       children: buildGridChildren(widget.evolutionChain),
     );
-//
-//    if (hasStage3Evolutions) {
-//      return GridView.count(
-//        crossAxisCount: 3,
-//        children: [
-//          EvolutionCard(pokemonName: basePokemon),
-//          EvolutionCard(pokemonName: basePokemon),
-//          EvolutionCard(pokemonName: basePokemon),
-//          //
-//          stage2Evolutions[0] != null ? EvolutionCard(pokemonName: stage2Evolutions[0].speciesName) : EvolutionCard(pokemonName: 'empty'),
-//          stage2Evolutions.length > 1 ? EvolutionCard(pokemonName: stage2Evolutions[1].speciesName) : EvolutionCard(pokemonName: 'empty'),
-//          stage2Evolutions.length > 2 ? EvolutionCard(pokemonName: stage2Evolutions[2].speciesName) : EvolutionCard(pokemonName: 'empty'),
-//          //
-//          hasStage3Evolutions && stage3Evolutions.length > 0 ? EvolutionCard(pokemonName: stage3Evolutions[0].speciesName) : EvolutionCard(pokemonName: 'empty'),
-//          hasStage3Evolutions && stage3Evolutions.length > 1 ? EvolutionCard(pokemonName: stage3Evolutions[1].speciesName) : EvolutionCard(pokemonName: 'empty'),
-//          hasStage3Evolutions && stage3Evolutions.length > 2 ? EvolutionCard(pokemonName: stage3Evolutions[2].speciesName) : EvolutionCard(pokemonName: 'empty'),
-//        ],
-//      );
-//
-//    } else if (hasStage2Evolutions) { // no stage 3 but has stage 2
-//      // check if eevee
-//
-//    } else { // no evolution at all
-//
-//    }
-//
-//    return Container();
   }
 
   List<Widget> buildGridChildren(PokemonEvolutionChain evolutionChain) {
@@ -339,7 +594,7 @@ class _EvolutionChainContainerState extends State<EvolutionChainContainer> {
 class EvolutionCard extends StatelessWidget {
   const EvolutionCard({
     Key key,
-    @required this.species,
+    this.species,
     this.isHidden,
   }) : super(key: key);
 
@@ -353,566 +608,40 @@ class EvolutionCard extends StatelessWidget {
     }
     if (species != null) {
       return Container(
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.blueAccent),
-              borderRadius: BorderRadius.all(Radius.circular(5.0)),
-            ),
-            padding: EdgeInsets.symmetric(vertical: 32.0, horizontal: 8.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Expanded(
-                  flex: 3,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: CachedNetworkImageProvider(species.imageUrl),
-                      ),
-                    ),
-                  ),
-                ),
-                Expanded(child: Text('#${formatPokemonId(species.pokemonId)}')),
-                Expanded(child: Text(species.pokemonName.inCaps)),
-              ],
-            ),
-          );
-    } else {
-      return Container(
-            padding: EdgeInsets.symmetric(vertical: 32.0, horizontal: 8.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(''),
-                Text(''),
-              ],
-            ),
-          );
-    }
-  }
-}
-
-//class OneEvolutionUI extends StatelessWidget {
-//  const OneEvolutionUI({
-//    Key key,
-//    @required this.evolutions,
-//  }) : super(key: key);
-//
-//  final List<EvolvesTo> evolutions;
-//
-//  @override
-//  Widget build(BuildContext context) {
-//    return Row(
-//      children: [
-//        Icon(Icons.arrow_forward),
-////        EvolutionCard(isHidden: true, pokemonName: evolutions[0].speciesName),
-//        EvolutionCard(isHidden: false, pokemonName: evolutions[0].speciesName),
-////        EvolutionCard(isHidden: true, pokemonName: evolutions[0].speciesName),
-//      ],
-//    );
-//  }
-//}
-//
-//class TwoEvolutionsUI extends StatelessWidget {
-//  const TwoEvolutionsUI({
-//    Key key,
-//    @required this.evolutions,
-//  }) : super(key: key);
-//
-//  final List<EvolvesTo> evolutions;
-//
-//  @override
-//  Widget build(BuildContext context) {
-//    return Column(
-//      children: [
-//        Row(
-//          children: [
-//            Transform.rotate(
-//                angle: -math.pi / 4, child: Icon(Icons.arrow_forward)),
-//            EvolutionCard(pokemonName: evolutions[0].speciesName),
-//          ],
-//        ),
-//        Row(
-//          children: [
-//            Transform.rotate(
-//                angle: math.pi / 4, child: Icon(Icons.arrow_forward)),
-//            EvolutionCard(pokemonName: evolutions[1].speciesName),
-//          ],
-//        ),
-//      ],
-//    );
-//  }
-//}
-//
-//class ThreeEvolutionsUI extends StatelessWidget {
-//  const ThreeEvolutionsUI({
-//    Key key,
-//    @required this.evolutions,
-//  }) : super(key: key);
-//
-//  final List<EvolvesTo> evolutions;
-//
-//  @override
-//  Widget build(BuildContext context) {
-//    return Column(
-//      children: [
-//        Row(
-//          children: [
-//            Transform.rotate(
-//                angle: -math.pi / 4, child: Icon(Icons.arrow_forward)),
-//            EvolutionCard(
-//                isHidden: false, pokemonName: evolutions[0].speciesName),
-//          ],
-//        ),
-//        Row(
-//          children: [
-//            Icon(Icons.arrow_forward),
-//            EvolutionCard(
-//                isHidden: false, pokemonName: evolutions[1].speciesName),
-//          ],
-//        ),
-//        Row(
-//          children: [
-//            Transform.rotate(
-//                angle: math.pi / 4, child: Icon(Icons.arrow_forward)),
-//            EvolutionCard(
-//                isHidden: false, pokemonName: evolutions[2].speciesName),
-//          ],
-//        ),
-//      ],
-//    );
-//  }
-//}
-//
-//class EightEvolutionsUI extends StatelessWidget {
-//  @override
-//  Widget build(BuildContext context) {
-//    return Padding(
-//      padding: const EdgeInsets.all(32.0),
-//      child: Column(
-//        children: [
-//          Row(
-//            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//            children: [
-//              Column(
-//                children: [
-//                  EvolutionCard(),
-//                  Transform.rotate(
-//                      angle: math.pi / 4, child: Icon(Icons.arrow_back)),
-//                ],
-//              ),
-//              Column(
-//                children: [
-//                  EvolutionCard(),
-//                  Icon(Icons.arrow_upward),
-//                ],
-//              ),
-//              Column(
-//                children: [
-//                  EvolutionCard(),
-//                  Transform.rotate(
-//                    angle: -math.pi / 4,
-//                    child: Icon(Icons.arrow_forward),
-//                  ),
-//                ],
-//              ),
-//            ],
-//          ),
-//          Row(
-//            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//            children: [
-//              EvolutionCard(),
-//              Icon(Icons.arrow_back),
-//              EvolutionCard(),
-//              Icon(Icons.arrow_forward),
-//              EvolutionCard(),
-//            ],
-//          ),
-//          Row(
-//            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//            children: [
-//              Column(
-//                children: [
-//                  Transform.rotate(
-//                    angle: math.pi / 4,
-//                    child: Icon(Icons.arrow_downward),
-//                  ),
-//                  EvolutionCard(),
-//                ],
-//              ),
-//              Column(
-//                children: [
-//                  Icon(Icons.arrow_downward),
-//                  EvolutionCard(),
-//                ],
-//              ),
-//              Column(
-//                children: [
-//                  Transform.rotate(
-//                    angle: -math.pi / 4,
-//                    child: Icon(Icons.arrow_downward),
-//                  ),
-//                  EvolutionCard(),
-//                ],
-//              ),
-//            ],
-//          ),
-//        ],
-//      ),
-//    );
-//  }
-//}
-
-class PokemonPageHeader extends StatelessWidget {
-  const PokemonPageHeader({
-    Key key,
-    @required this.pokemon,
-  }) : super(key: key);
-
-  final Pokemon pokemon;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(
-        top: 8.0,
-        bottom: 8.0,
-        left: 16.0,
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            flex: 2,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                PokemonName(name: pokemon.name),
-                PokemonId(id: pokemon.id),
-                PokemonTypeList(typeList: pokemon.typeList),
-              ],
-            ),
-          ),
-          Expanded(
-            child: Hero(
-              tag: 'pokemonImage${pokemon.imageUrl}',
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.blueAccent),
+          borderRadius: BorderRadius.all(Radius.circular(5.0)),
+        ),
+        padding: EdgeInsets.symmetric(vertical: 32.0, horizontal: 8.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Expanded(
+              flex: 3,
               child: Container(
-                width: 100,
-                height: 100,
                 decoration: BoxDecoration(
                   image: DecorationImage(
-                    image: CachedNetworkImageProvider(pokemon.imageUrl),
+                    image: CachedNetworkImageProvider(species.imageUrl),
                   ),
                 ),
               ),
             ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class EvolutionContainer extends StatefulWidget {
-  const EvolutionContainer({
-    Key key,
-    @required this.speciesUrl,
-  }) : super(key: key);
-
-  final String speciesUrl;
-
-  @override
-  _EvolutionContainerState createState() => _EvolutionContainerState();
-}
-
-class _EvolutionContainerState extends State<EvolutionContainer> {
-  bool isLoading = true;
-  PokemonEvolutionChain evolutionChain;
-
-  @override
-  void initState() {
-    fetchEvolutionChain();
-  }
-
-  void fetchEvolutionChain() async {
-    evolutionChain = await fetchPokemonEvolutionChainService(widget.speciesUrl);
-    setState(() {
-      isLoading = false;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: isLoading
-          ? CircularProgressIndicator()
-          : Container(child: Text('Got the evolution chain')),
-//      child: FutureBuilder(
-//        future: null,
-//        builder: (context, snapshot) {
-//          if (snapshot.connectionState == ConnectionState.done) {
-//            return Container(child: Text('Test'));
-//          } else {
-//            return Center(child: CircularProgressIndicator());
-//          }
-//        }
-//      ),
-    );
-  }
-}
-
-class BaseStatsContainer extends StatelessWidget {
-  const BaseStatsContainer({
-    Key key,
-    @required this.baseStats,
-  }) : super(key: key);
-
-  final PokemonBaseStats baseStats;
-
-  List<charts.Series<BaseStats, String>> getData() {
-    final data = [
-      BaseStats('HP', baseStats.hp),
-      BaseStats('Attack', baseStats.attack),
-      BaseStats('Defense', baseStats.defense),
-      BaseStats('Sp-Atk', baseStats.specialAttack),
-      BaseStats('Sp-Def', baseStats.specialDefense),
-      BaseStats('Speed', baseStats.speed),
-    ];
-
-    return [
-      charts.Series<BaseStats, String>(
-        id: 'Base Stats',
-        domainFn: (BaseStats baseStats, _) => baseStats.statName,
-        measureFn: (BaseStats baseStats, _) => baseStats.statValue,
-        data: data,
-        labelAccessorFn: (BaseStats baseStats, _) => '${baseStats.statValue}',
-//        '${baseStats.statName}: ${baseStats.statValue}',
-      )
-    ];
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return charts.BarChart(
-      getData(),
-      vertical: false,
-      barRendererDecorator: new charts.BarLabelDecorator<String>(),
-      primaryMeasureAxis:
-          new charts.NumericAxisSpec(renderSpec: new charts.NoneRenderSpec()),
-//       Hide domain axis.
-      domainAxis: new charts.OrdinalAxisSpec(
-        showAxisLine: false,
-      ),
-    );
-  }
-}
-
-class BaseStats {
-  final String statName;
-  final int statValue;
-
-  BaseStats(this.statName, this.statValue);
-}
-
-class AboutContainer extends StatelessWidget {
-  const AboutContainer({
-    Key key,
-    @required this.pokemon,
-  }) : super(key: key);
-
-  final Pokemon pokemon;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: GridView.count(
-        childAspectRatio: 5,
-        crossAxisCount: 2,
-        children: [
-          AboutGridLabel(label: 'Height'),
-          AboutGridValue(value: '${pokemon.heightInDecimeters} m'),
-          AboutGridLabel(label: 'Weight'),
-          AboutGridValue(value: '${pokemon.weightInDecimeters} kg'),
-          AboutGridLabel(label: 'Abilities'),
-          AboutGridValue(value: getAbilitiesString()),
-          AboutGridLabel(label: 'Base Experience'),
-          AboutGridValue(value: '${pokemon.baseExperience} xp'),
-        ],
-      ),
-    );
-  }
-
-  String getAbilitiesString() {
-    var concatenated = StringBuffer();
-    final abilityList = pokemon.abilityList;
-    for (var i = 0; i < abilityList.length; ++i) {
-      concatenated.write(abilityList[i].name);
-      if (i < abilityList.length - 1) {
-        concatenated.write(', ');
-      }
-    }
-    return concatenated.toString();
-  }
-}
-
-class AboutGridValue extends StatelessWidget {
-  const AboutGridValue({
-    Key key,
-    @required this.value,
-  }) : super(key: key);
-
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      value,
-      style: TextStyle(
-        fontSize: 24.0,
-      ),
-    );
-  }
-}
-
-class AboutGridLabel extends StatelessWidget {
-  const AboutGridLabel({
-    Key key,
-    @required this.label,
-  }) : super(key: key);
-
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      label,
-      style: TextStyle(
-        fontSize: 24.0,
-        color: Colors.blueGrey,
-      ),
-    );
-  }
-}
-
-class PokemonName extends StatelessWidget {
-  const PokemonName({
-    Key key,
-    @required this.name,
-  }) : super(key: key);
-
-  final String name;
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      name,
-      style: TextStyle(
-        color: Colors.white,
-        fontWeight: FontWeight.bold,
-        fontSize: 32.0,
-      ),
-    );
-  }
-}
-
-class PokemonId extends StatelessWidget {
-  const PokemonId({
-    Key key,
-    @required this.id,
-  }) : super(key: key);
-
-  final int id;
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      '#${formatPokemonId(id)}',
-      style: TextStyle(
-        color: Colors.white,
-        fontWeight: FontWeight.bold,
-        fontSize: 16.0,
-      ),
-    );
-  }
-
-}
-
-class PokemonTypeList extends StatelessWidget {
-  const PokemonTypeList({
-    Key key,
-    @required List<PokemonType> typeList,
-  })  : _typeList = typeList,
-        super(key: key);
-
-  final List<PokemonType> _typeList;
-
-  @override
-  Widget build(BuildContext context) {
-    if (_typeList.length > 1) {
-      // Pokemon has 2 types
-      return Padding(
-        padding: const EdgeInsets.only(top: 4.0),
-        child: Row(
-          children: [
-            PokemonTypeName(
-              name: _typeList[0].type.name,
-              mainTypeName: _typeList[0].type.name,
-            ),
-            PokemonTypeName(
-              name: _typeList[1].type.name,
-              mainTypeName: _typeList[0].type.name,
-            ),
+            Expanded(child: Text('#${formatPokemonId(species.pokemonId)}')),
+            Expanded(child: Text(species.pokemonName.inCaps)),
           ],
         ),
       );
     } else {
-      return Padding(
-        padding: const EdgeInsets.only(top: 4.0),
-        child: PokemonTypeName(
-          name: _typeList[0].type.name,
-          mainTypeName: _typeList[0].type.name,
+      return Container(
+        padding: EdgeInsets.symmetric(vertical: 32.0, horizontal: 8.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(''),
+            Text(''),
+          ],
         ),
       );
     }
-  }
-}
-
-class PokemonTypeName extends StatelessWidget {
-  const PokemonTypeName({
-    Key key,
-    @required String name,
-    @required String mainTypeName,
-  })  : _name = name,
-        _mainTypeName = mainTypeName,
-        super(key: key);
-
-  final String _name;
-  final String _mainTypeName;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(
-        vertical: 4.0,
-        horizontal: 12.0,
-      ),
-      margin: EdgeInsets.only(right: 8.0),
-      decoration: BoxDecoration(
-        color: lighten(PokemonColorPicker.getColor(_mainTypeName)),
-        border: Border.all(
-          color: Colors.transparent,
-        ),
-        borderRadius: BorderRadius.all(
-          Radius.circular(20),
-        ),
-      ),
-      child: Text(
-        _name.inCaps,
-        style: TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
-          fontSize: 14.0,
-        ),
-      ),
-    );
   }
 }
