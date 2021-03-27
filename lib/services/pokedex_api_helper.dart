@@ -6,8 +6,10 @@ import 'package:pokedex/models/simple_pokemon_list.dart';
 
 const String _baseUrl = 'https://pokeapi.co/api/v2';
 
-Future<SimplePokemonList> fetchPokemonListFromApi(
-    {int offset = 0, int limit = 20}) async {
+Future<SimplePokemonList> fetchPokemonListFromApi({
+  int offset = 0,
+  int limit = 20,
+}) async {
   print('fetchPokemonListFromApi()');
   try {
     final fetchUrl = '$_baseUrl/pokemon';
@@ -74,6 +76,7 @@ Future<Pokemon> fetchPokemonDetailsFromApi({String name, int id}) async {
     List<Response> responses = await Future.wait(futureResponses);
     final pokemon = Pokemon.fromJson(responses[0].data);
     final species = PokemonSpecies.fromJson(responses[1].data);
+    pokemon.species = species;
 
     // Fetch evolution chain details
     print('fetching evolution');

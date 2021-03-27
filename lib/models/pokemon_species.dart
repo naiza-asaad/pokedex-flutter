@@ -8,9 +8,10 @@ class PokemonSpecies {
   });
 
   factory PokemonSpecies.fromJson(Map<String, dynamic> parsedJson) {
+    final flavorText = (parsedJson['flavor_text_entries'][0]['flavor_text'] as String).replaceAll('\n', ' ').replaceAll('\u000c', ' ');
     return PokemonSpecies(
       evolutionChainUrl: parsedJson['evolution_chain']['url'],
-      flavorTextEntry1: parsedJson['flavor_text_entries'][0]['flavor_text'],
+      flavorTextEntry1: flavorText,
     );
   }
 

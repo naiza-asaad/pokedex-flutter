@@ -14,7 +14,7 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (_) => PokemonPage(
             pokemon: args.pokemon,
-            primaryThemeColor: args.mainTypeColor,
+            pokemonColor: args.mainTypeColor,
           ),
         );
 

@@ -41,10 +41,8 @@ class Pokemon {
     List<PokemonAbility> abilityList =
         tempAbilityList.map((e) => PokemonAbility.fromJson(e)).toList();
 
-    print('here');
     var tempMoveList = parsedJson['moves'] as List;
     List<PokemonMove> moveList = tempMoveList.map((e) => PokemonMove.fromJson(e)).toList();
-    print('end');
 
     return Pokemon(
       id: parsedJson['id'],

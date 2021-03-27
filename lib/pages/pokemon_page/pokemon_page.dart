@@ -12,11 +12,11 @@ class PokemonPage extends StatefulWidget {
   static const String route = '/pokemon';
 
   final Pokemon pokemon;
-  final Color primaryThemeColor;
+  final Color pokemonColor;
 
   const PokemonPage({
     this.pokemon,
-    this.primaryThemeColor,
+    this.pokemonColor,
   });
 
   @override
@@ -27,7 +27,7 @@ class _PokemonPageState extends State<PokemonPage> {
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
-      primaryColor: widget.primaryThemeColor,
+      primaryColor: widget.pokemonColor,
       pokemon: widget.pokemon,
     );
   }
@@ -69,7 +69,7 @@ class _CustomScaffoldState extends State<CustomScaffold> {
             ),
             PokemonPageDetails(
               futurePokemon: futurePokemon,
-              primaryColor: widget.primaryColor,
+              pokemonColor: widget.primaryColor,
             ),
           ],
         ),
@@ -258,11 +258,11 @@ class PokemonPageDetails extends StatelessWidget {
   const PokemonPageDetails({
     Key key,
     @required this.futurePokemon,
-    @required this.primaryColor,
+    @required this.pokemonColor,
   }) : super(key: key);
 
   final Future<Pokemon> futurePokemon;
-  final Color primaryColor;
+  final Color pokemonColor;
 
   @override
   Widget build(BuildContext context) {
@@ -303,12 +303,14 @@ class PokemonPageDetails extends StatelessWidget {
                         children: [
                           AboutContainer(pokemon: snapshot.data),
                           BaseStatsContainer(
-                              baseStats: snapshot.data.baseStats),
+                            baseStats: snapshot.data.baseStats,
+                            pokemonColor: pokemonColor,
+                          ),
                           EvolutionChainContainer(
                               evolutionChain: snapshot.data.evolutionChain),
                           MovesContainer(
                             moveList: snapshot.data.moveList,
-                            itemBackgroundColor: primaryColor,
+                            itemBackgroundColor: pokemonColor,
                           ),
                         ],
                       ),
@@ -390,21 +392,65 @@ class AboutContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: GridView.count(
-        childAspectRatio: 5,
-        crossAxisCount: 2,
-        children: [
-          AboutGridLabel(label: 'Height'),
-          AboutGridValue(value: '${pokemon.heightInDecimeters} m'),
-          AboutGridLabel(label: 'Weight'),
-          AboutGridValue(value: '${pokemon.weightInDecimeters} kg'),
-          AboutGridLabel(label: 'Abilities'),
-          AboutGridValue(value: getAbilitiesString()),
-          AboutGridLabel(label: 'Base Experience'),
-          AboutGridValue(value: '${pokemon.baseExperience} xp'),
-        ],
+    print('species??');
+    print(pokemon.species);
+
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(
+                top: 8.0,
+                bottom: 16.0,
+              ),
+              child: Text(
+                pokemon.species.flavorTextEntry1,
+                style: TextStyle(fontSize: 24.0),
+              ),
+            ),
+            Table(
+              border: TableBorder.all(),
+              columnWidths: const <int, TableColumnWidth>{
+                0: IntrinsicColumnWidth(),
+                1: FlexColumnWidth(),
+              },
+              children: <TableRow>[
+                TableRow(
+                  children: [
+                    TableCell(child: AboutGridLabel('Height')),
+                    TableCell(
+                        child:
+                            AboutGridValue('${pokemon.heightInDecimeters} m')),
+                  ],
+                ),
+                TableRow(
+                  children: [
+                    TableCell(child: AboutGridLabel('Weight')),
+                    TableCell(
+                        child:
+                            AboutGridValue('${pokemon.weightInDecimeters} kg')),
+                  ],
+                ),
+                TableRow(
+                  children: [
+                    TableCell(child: AboutGridLabel('Abilities')),
+                    TableCell(child: AboutGridValue(getAbilitiesString())),
+                  ],
+                ),
+                TableRow(
+                  children: [
+                    TableCell(child: AboutGridLabel('Base Experience')),
+                    TableCell(
+                        child: AboutGridValue('${pokemon.baseExperience} xp')),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -422,40 +468,46 @@ class AboutContainer extends StatelessWidget {
   }
 }
 
-class AboutGridValue extends StatelessWidget {
-  const AboutGridValue({
-    Key key,
-    @required this.value,
-  }) : super(key: key);
-
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      value,
-      style: TextStyle(
-        fontSize: 24.0,
-      ),
-    );
-  }
-}
-
 class AboutGridLabel extends StatelessWidget {
-  const AboutGridLabel({
+  const AboutGridLabel(
+    this.label, {
     Key key,
-    @required this.label,
   }) : super(key: key);
 
   final String label;
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      label,
-      style: TextStyle(
-        fontSize: 24.0,
-        color: Colors.blueGrey,
+    return Padding(
+      padding: const EdgeInsets.all(4.0),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontSize: 22.0,
+          color: Colors.blueGrey,
+        ),
+      ),
+    );
+  }
+}
+
+class AboutGridValue extends StatelessWidget {
+  const AboutGridValue(
+    this.value, {
+    Key key,
+  }) : super(key: key);
+
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(4.0),
+      child: Text(
+        value,
+        style: TextStyle(
+          fontSize: 22.0,
+        ),
       ),
     );
   }
@@ -472,9 +524,11 @@ class BaseStatsContainer extends StatelessWidget {
   const BaseStatsContainer({
     Key key,
     @required this.baseStats,
+    @required this.pokemonColor,
   }) : super(key: key);
 
   final PokemonBaseStats baseStats;
+  final Color pokemonColor;
 
   List<charts.Series<BaseStats, String>> getData() {
     final data = [
@@ -486,6 +540,9 @@ class BaseStatsContainer extends StatelessWidget {
       BaseStats('Speed', baseStats.speed),
     ];
 
+    print(
+        'color=${pokemonColor.toString().replaceAll('Color(', '').replaceAll(')', '').replaceAll('0x', '')}');
+
     return [
       charts.Series<BaseStats, String>(
         id: 'Base Stats',
@@ -493,8 +550,13 @@ class BaseStatsContainer extends StatelessWidget {
         measureFn: (BaseStats baseStats, _) => baseStats.statValue,
         data: data,
         labelAccessorFn: (BaseStats baseStats, _) => '${baseStats.statValue}',
-//        '${baseStats.statName}: ${baseStats.statValue}',
-      )
+        colorFn: (BaseStats baseStats, _) => charts.Color.fromHex(
+            //   code: '#F5AC78',
+            // ),
+            code:
+                '#${pokemonColor.toString().replaceAll("Color(", "").replaceAll(")", "").replaceAll("0xff", "")}'),
+        // '${baseStats.statName}: ${baseStats.statValue}',
+      ),
     ];
   }
 
