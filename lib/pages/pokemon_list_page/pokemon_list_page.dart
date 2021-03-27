@@ -97,7 +97,7 @@ class _PokemonListPageState extends State<PokemonListPage> {
               Expanded(
                 child: GridView.builder(
                   gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 200,
+                    maxCrossAxisExtent: 250,
                     childAspectRatio: 3 / 2,
                   ),
                   itemCount: _pokemonList.length,

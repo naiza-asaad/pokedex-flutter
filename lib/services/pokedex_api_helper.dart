@@ -11,7 +11,7 @@ Future<SimplePokemonList> fetchPokemonListFromApi(
     {int offset = 0, int limit = 20}) async {
   print('fetchPokemonListFromApi()');
   try {
-//    final fetchUrl = '$_baseUrl/pokemon';
+   // final fetchUrl = '$_baseUrl/pokemon';
 //    final fetchUrl = '$_baseUrl/pokemon?offset=438&limit=10'; // mime jr
     final fetchUrl = '$_baseUrl/pokemon?offset=279&limit=10'; // ralts
 //    final fetchUrl = '$_baseUrl/pokemon?offset=132&limit=10'; // eevee
@@ -118,39 +118,63 @@ Future _fetchImagesForEvolutionChain(PokemonEvolutionChain chain) async {
     }
   }
 
+  List<Future<Response>> futureResponses = [];
 
-  List<Future<Response>> futureStage2Responses = [];
-  List<Future<Response>> futureStage3Responses = [];
 
-  var fetchImageUrl;
+  // List<Future<Response>> futureStage2Responses = [];
+  // List<Future<Response>> futureStage3Responses = [];
+
+  // 1st pokemon
+  var fetchImageUrl = '$_baseUrl/pokemon/${chain.chain.pokemonName}';
+  futureResponses.add(Dio().get(fetchImageUrl));
+  print('to fetch=$fetchImageUrl');
+
+  // stage 2 evolutions
   if (hasStage2Evolutions) {
     for (var stage2Evolution in stage2Evolutions) {
-      fetchImageUrl = '$_baseUrl/pokemon/${stage2Evolution.speciesName}';
+      fetchImageUrl = '$_baseUrl/pokemon/${stage2Evolution.pokemonName}';
       print('to fetch=$fetchImageUrl');
-      futureStage2Responses.add(Dio().get(fetchImageUrl));
+      futureResponses.add(Dio().get(fetchImageUrl));
+      // futureStage2Responses.add(Dio().get(fetchImageUrl));
     }
   }
 
+  // stage 3 evolutions
   if (hasStage3Evolutions) {
     for (var stage3Evolution in stage3Evolutions) {
-      fetchImageUrl = '$_baseUrl/pokemon/${stage3Evolution.speciesName}';
+      fetchImageUrl = '$_baseUrl/pokemon/${stage3Evolution.pokemonName}';
       print('to fetch=$fetchImageUrl');
-      futureStage3Responses.add(Dio().get(fetchImageUrl));
+      // futureStage3Responses.add(Dio().get(fetchImageUrl));
+      futureResponses.add(Dio().get(fetchImageUrl));
     }
   }
 
-  List<Response> stage2Responses = await Future.wait(futureStage2Responses);
-  List<Response> stage3Responses = await Future.wait(futureStage3Responses);
-  for (var i = 0; i < stage2Responses.length; ++i) {
-    final pokemon = Pokemon.fromJson(stage2Responses[i].data);
-    // TODO: Investigate as the potential source of bug.
+  // List<Response> stage2Responses = await Future.wait(futureStage2Responses);
+  // List<Response> stage3Responses = await Future.wait(futureStage3Responses);
+
+  List<Response> responses = await Future.wait(futureResponses);
+
+  // base pokemon
+  final pokemon = Pokemon.fromJson(responses[0].data);
+  chain.chain.imageUrl = pokemon.imageUrl;
+  chain.chain.pokemonId = pokemon.id;
+  print('got base pokemon');
+
+  // stage 2 evolutions
+  for (var i = 0; i < stage2Evolutions.length; ++i) {
+    var index = 1 + i;
+    final pokemon = Pokemon.fromJson(responses[index].data);
     stage2Evolutions[i].imageUrl = pokemon.imageUrl;
+    stage2Evolutions[i].pokemonId = pokemon.id;
+    print('got pokemon[$index]');
   }
 
-  for (var i = 0; i < stage3Responses.length; ++i) {
-    final pokemon = Pokemon.fromJson(stage3Responses[i].data);
-    // TODO: Investigate as the potential source of bug.
+  for (var i = 0; i < stage3Evolutions.length; ++i) {
+    var index = 1 + stage2Evolutions.length + i;
+    final pokemon = Pokemon.fromJson(responses[index].data);
     stage3Evolutions[i].imageUrl = pokemon.imageUrl;
+    stage3Evolutions[i].pokemonId = pokemon.id;
+    print('got pokemon[$index]');
   }
 
   print('fetched images');

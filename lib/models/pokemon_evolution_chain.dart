@@ -19,12 +19,13 @@ class PokemonEvolutionChain {
 }
 
 class EvolvesTo {
-  String speciesName;
+  String pokemonName;
   List<EvolvesTo> evolutions;
   String imageUrl;
+  int pokemonId;
 
   EvolvesTo({
-    this.speciesName,
+    this.pokemonName,
     this.evolutions,
   });
 
@@ -32,13 +33,13 @@ class EvolvesTo {
     var tempEvolutionsList = parsedJson['evolves_to'] as List;
     if (tempEvolutionsList.length == 0) {
       return EvolvesTo(
-        speciesName: parsedJson['species']['name'],
+        pokemonName: parsedJson['species']['name'],
         evolutions: [],
       );
     } else {
       List<EvolvesTo> evolutionsList = tempEvolutionsList.map((e) => EvolvesTo.fromJson(e)).toList();
       return EvolvesTo(
-        speciesName: parsedJson['species']['name'],
+        pokemonName: parsedJson['species']['name'],
         evolutions: evolutionsList,
       );
     }
@@ -46,7 +47,7 @@ class EvolvesTo {
 
   @override
   String toString() {
-    return 'species name=$speciesName';
+    return 'species name=$pokemonName';
   }
 }
 

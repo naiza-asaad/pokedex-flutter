@@ -247,11 +247,11 @@ class _EvolutionChainContainerState extends State<EvolutionChainContainer> {
 
     print('stage 2 evolutions');
     for (var stage2Evolution in stage2Evolutions) {
-      print(stage2Evolution.speciesName);
+      print(stage2Evolution.pokemonName);
     }
     print('stage 3 evolutions');
     for (var stage3Evolution in stage3Evolutions) {
-      print(stage3Evolution.speciesName);
+      print(stage3Evolution.pokemonName);
     }
 
     List<Widget> children = [];
@@ -349,10 +349,10 @@ class EvolutionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (species != null) {
-      print('name=${species.speciesName},imageUrl=${species.imageUrl}');
+      print('name=${species.pokemonName},imageUrl=${species.imageUrl}');
     }
-    return species != null
-        ? Container(
+    if (species != null) {
+      return Container(
             decoration: BoxDecoration(
               border: Border.all(color: Colors.blueAccent),
               borderRadius: BorderRadius.all(Radius.circular(5.0)),
@@ -361,12 +361,23 @@ class EvolutionCard extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(species.speciesName),
-                Text(''),
+                Expanded(
+                  flex: 3,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: CachedNetworkImageProvider(species.imageUrl),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(child: Text('#${formatPokemonId(species.pokemonId)}')),
+                Expanded(child: Text(species.pokemonName.inCaps)),
               ],
             ),
-          )
-        : Container(
+          );
+    } else {
+      return Container(
             padding: EdgeInsets.symmetric(vertical: 32.0, horizontal: 8.0),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -376,6 +387,7 @@ class EvolutionCard extends StatelessWidget {
               ],
             ),
           );
+    }
   }
 }
 
@@ -813,7 +825,7 @@ class PokemonId extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(
-      '#${_formatPokemonId(id)}',
+      '#${formatPokemonId(id)}',
       style: TextStyle(
         color: Colors.white,
         fontWeight: FontWeight.bold,
@@ -822,13 +834,6 @@ class PokemonId extends StatelessWidget {
     );
   }
 
-  /// Display Pokemon ID with left-padded zeroes.
-  /// e.g. 0001, 0015, 0324
-  /// As of this writing, there are 898 Pokemon, so idWidth = 3.
-  static String _formatPokemonId(int id) {
-    int idWidth = 3;
-    return id.toString().padLeft(idWidth, '0');
-  }
 }
 
 class PokemonTypeList extends StatelessWidget {
