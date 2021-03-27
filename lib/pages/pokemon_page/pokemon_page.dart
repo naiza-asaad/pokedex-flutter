@@ -67,7 +67,10 @@ class _CustomScaffoldState extends State<CustomScaffold> {
             PokemonPageHeader(
               pokemon: widget.pokemon,
             ),
-            PokemonPageDetails(futurePokemon: futurePokemon),
+            PokemonPageDetails(
+              futurePokemon: futurePokemon,
+              primaryColor: widget.primaryColor,
+            ),
           ],
         ),
       ),
@@ -255,9 +258,11 @@ class PokemonPageDetails extends StatelessWidget {
   const PokemonPageDetails({
     Key key,
     @required this.futurePokemon,
+    @required this.primaryColor,
   }) : super(key: key);
 
   final Future<Pokemon> futurePokemon;
+  final Color primaryColor;
 
   @override
   Widget build(BuildContext context) {
@@ -301,7 +306,10 @@ class PokemonPageDetails extends StatelessWidget {
                               baseStats: snapshot.data.baseStats),
                           EvolutionChainContainer(
                               evolutionChain: snapshot.data.evolutionChain),
-                          Center(child: Text('Tab 4')),
+                          MovesContainer(
+                            moveList: snapshot.data.moveList,
+                            itemBackgroundColor: primaryColor,
+                          ),
                         ],
                       ),
                     ),
@@ -313,6 +321,59 @@ class PokemonPageDetails extends StatelessWidget {
             }
             return Center(child: CircularProgressIndicator());
           },
+        ),
+      ),
+    );
+  }
+}
+
+class MovesContainer extends StatelessWidget {
+  const MovesContainer({
+    Key key,
+    @required this.moveList,
+    @required this.itemBackgroundColor,
+  }) : super(key: key);
+
+  final List<PokemonMove> moveList;
+  final Color itemBackgroundColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Wrap(
+        direction: Axis.horizontal,
+        spacing: 3,
+        runSpacing: 3,
+        children: moveList
+            .map((move) => MoveContainerItem(
+                  moveName: formatPokemonMoveName(move.name),
+                  backgroundColor: itemBackgroundColor,
+                ))
+            .toList(),
+      ),
+    );
+  }
+}
+
+class MoveContainerItem extends StatelessWidget {
+  const MoveContainerItem({
+    Key key,
+    this.moveName,
+    this.backgroundColor,
+  }) : super(key: key);
+
+  final String moveName;
+  final Color backgroundColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(8.0),
+      color: backgroundColor,
+      child: Text(
+        moveName,
+        style: TextStyle(
+          color: Colors.white,
         ),
       ),
     );

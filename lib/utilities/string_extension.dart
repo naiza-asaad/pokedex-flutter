@@ -16,3 +16,11 @@ String formatPokemonId(int id) {
   int idWidth = 3;
   return id.toString().padLeft(idWidth, '0');
 }
+
+/// Formats the Pokemon's move name returned by the API.
+/// e.g. razor-wind' becomes 'Razor Wind'.
+String formatPokemonMoveName(String moveName) {
+  final words = moveName.split('-').map((e) => e.inCaps).toList();
+  final formattedMoveName = words.join(' ');
+  return formattedMoveName;
+}

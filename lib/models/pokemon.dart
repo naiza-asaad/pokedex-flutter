@@ -13,6 +13,7 @@ class Pokemon {
   int baseExperience;
   PokemonBaseStats baseStats;
   String speciesDetailsUrl;
+  List<PokemonMove> moveList;
 
   PokemonSpecies species;
   PokemonEvolutionChain evolutionChain;
@@ -27,7 +28,8 @@ class Pokemon {
     this.weightInDecimeters,
     this.baseExperience,
     this.baseStats,
-    this.speciesDetailsUrl
+    this.speciesDetailsUrl,
+    this.moveList,
   });
 
   factory Pokemon.fromJson(Map<String, dynamic> parsedJson) {
@@ -38,6 +40,11 @@ class Pokemon {
     var tempAbilityList = parsedJson['abilities'] as List;
     List<PokemonAbility> abilityList =
         tempAbilityList.map((e) => PokemonAbility.fromJson(e)).toList();
+
+    print('here');
+    var tempMoveList = parsedJson['moves'] as List;
+    List<PokemonMove> moveList = tempMoveList.map((e) => PokemonMove.fromJson(e)).toList();
+    print('end');
 
     return Pokemon(
       id: parsedJson['id'],
@@ -52,6 +59,7 @@ class Pokemon {
       baseExperience: parsedJson['base_experience'],
       baseStats: PokemonBaseStats.fromJson(parsedJson['stats']),
       speciesDetailsUrl: parsedJson['species']['url'],
+      moveList: moveList,
     );
   }
 
@@ -79,7 +87,8 @@ class PokemonBaseStats {
   });
 
   factory PokemonBaseStats.fromJson(List<dynamic> parsedList) {
-    List<PokemonBaseStat> baseStatList = parsedList.map((e) => PokemonBaseStat.fromJson(e)).toList();
+    List<PokemonBaseStat> baseStatList =
+        parsedList.map((e) => PokemonBaseStat.fromJson(e)).toList();
     return PokemonBaseStats(
       hp: baseStatList[0].baseStat,
       attack: baseStatList[1].baseStat,
@@ -96,7 +105,7 @@ class PokemonBaseStats {
   }
 }
 
-class PokemonBaseStat{
+class PokemonBaseStat {
   int baseStat;
   String name;
   String detailsUrl;
@@ -184,5 +193,22 @@ class Type {
   @override
   String toString() {
     return 'type name=$name\n';
+  }
+}
+
+class PokemonMove {
+  String name;
+  String url;
+
+  PokemonMove({
+    this.name,
+    this.url,
+  });
+
+  factory PokemonMove.fromJson(Map<String, dynamic> parsedJson) {
+    return PokemonMove(
+      name: parsedJson['move']['name'],
+      url: parsedJson['move']['url'],
+    );
   }
 }
