@@ -423,7 +423,7 @@ class AboutContainer extends StatelessWidget {
                     TableCell(child: AboutGridLabel('Height')),
                     TableCell(
                         child:
-                            AboutGridValue('${pokemon.heightInDecimeters} m')),
+                            AboutGridValue('${pokemon.heightInDecimeters/10} m')),
                   ],
                 ),
                 TableRow(
@@ -431,7 +431,7 @@ class AboutContainer extends StatelessWidget {
                     TableCell(child: AboutGridLabel('Weight')),
                     TableCell(
                         child:
-                            AboutGridValue('${pokemon.weightInDecimeters} kg')),
+                            AboutGridValue('${pokemon.weightInDecimeters/10} kg')),
                   ],
                 ),
                 TableRow(
