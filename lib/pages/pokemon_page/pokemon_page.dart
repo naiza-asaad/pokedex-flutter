@@ -600,9 +600,12 @@ class _EvolutionChainContainerState extends State<EvolutionChainContainer> {
 
   @override
   Widget build(BuildContext context) {
-    return GridView.count(
-      crossAxisCount: 3,
-      children: buildGridChildren(widget.evolutionChain),
+    return Center(
+      child: GridView.count(
+        shrinkWrap: true,
+        crossAxisCount: 3,
+        children: buildGridChildren(widget.evolutionChain),
+      ),
     );
   }
 
@@ -659,6 +662,7 @@ class _EvolutionChainContainerState extends State<EvolutionChainContainer> {
     }
 
     // Row 2
+    // Column 1
     if (hasStage2Evolutions) {
       // base pokemon
       children.add(EvolutionCard(species: evolutionChain.chain));
