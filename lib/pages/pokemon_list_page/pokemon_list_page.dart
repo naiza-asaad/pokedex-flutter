@@ -68,6 +68,10 @@ class _PokemonListPageState extends State<PokemonListPage> {
             icon: _appBarActionIcon,
             onPressed: _onPressSearchIcon,
           ),
+          IconButton(
+            icon: Icon(Icons.refresh),
+            onPressed: _onPressRefreshIcon,
+          )
         ],
         elevation: 0,
       ),
@@ -83,24 +87,27 @@ class _PokemonListPageState extends State<PokemonListPage> {
               Expanded(child: Center(child: CircularProgressIndicator()))
             else
               Expanded(
-                child: GridView.builder(
-                  controller: _scrollController,
-                  gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 250,
-                    childAspectRatio: 3 / 2,
+                child: RefreshIndicator(
+                  onRefresh: _handleRefresh,
+                  child: GridView.builder(
+                    controller: _scrollController,
+                    gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                      maxCrossAxisExtent: 250,
+                      childAspectRatio: 3 / 2,
+                    ),
+                    itemCount: !_hasSearched
+                        ? _simplePokemonList.pokemonList.length
+                        : _searchResultList.length,
+                    itemBuilder: (context, index) {
+                      if (!_hasSearched) {
+                        Pokemon pokemon = _simplePokemonList.pokemonList[index];
+                        return PokemonListCard(pokemon);
+                      } else {
+                        Pokemon pokemon = _searchResultList[index];
+                        return PokemonListCard(pokemon);
+                      }
+                    },
                   ),
-                  itemCount: !_hasSearched
-                      ? _simplePokemonList.pokemonList.length
-                      : _searchResultList.length,
-                  itemBuilder: (context, index) {
-                    if (!_hasSearched) {
-                      Pokemon pokemon = _simplePokemonList.pokemonList[index];
-                      return PokemonListCard(pokemon);
-                    } else {
-                      Pokemon pokemon = _searchResultList[index];
-                      return PokemonListCard(pokemon);
-                    }
-                  },
                 ),
               ),
           ],
@@ -124,9 +131,6 @@ class _PokemonListPageState extends State<PokemonListPage> {
     });
   }
 
-  /// Fetches initial list and search Pokemon list.
-  /// If [searchPokemonName] is given, fetch initial list.
-  /// Otherwise, search for a specific Pokemon.
   void _fetchInitialPokemonList() async {
     // simplePokemonList only contains the name and detailsUrl of each Pokemon.
     // We fetch the details (types, image, etc.) after fetching simplePokemonList.
@@ -158,7 +162,7 @@ class _PokemonListPageState extends State<PokemonListPage> {
   }
 
   void _handleScroll() {
-    if (_scrollController.position.pixels ==
+    if (!_isLoading && _scrollController.position.pixels ==
         _scrollController.position.maxScrollExtent) {
       // At the bottom of the list
       print('tried to scroll down at the bottom');
@@ -189,5 +193,15 @@ class _PokemonListPageState extends State<PokemonListPage> {
     setState(() {
       _isLoading = false;
     });
+  }
+
+  void _onPressRefreshIcon() => _handleRefresh();
+
+  Future<void> _handleRefresh() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+  _fetchInitialPokemonList();
   }
 }
