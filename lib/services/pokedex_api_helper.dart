@@ -5,15 +5,25 @@ import 'package:pokedex/models/pokemon_species.dart';
 import 'package:pokedex/models/simple_pokemon_list.dart';
 
 const String _baseUrl = 'https://pokeapi.co/api/v2';
+const String _initialFetchUrl = '$_baseUrl/pokemon';
 
 Future<SimplePokemonList> fetchPokemonListFromApi({
   int offset = 0,
   int limit = 20,
+  String nextPageUrl,
 }) async {
   print('fetchPokemonListFromApi()');
   try {
-    final fetchUrl = '$_baseUrl/pokemon';
-    print('fetchUrl=$fetchUrl');
+    bool hasPaginatedUrl =
+        nextPageUrl != null && nextPageUrl.isNotEmpty;
+
+    final fetchUrl = !hasPaginatedUrl ? _initialFetchUrl : nextPageUrl;
+
+    print('test');
+    print(fetchUrl);
+    print('end test');
+//    print('fetchUrl=$fetchUrl');
+//    print('fetchUrl=$fetchUrl');
 //    final fetchUrl = '$_baseUrl/pokemon?offset=438&limit=10'; // mime jr
 //     final fetchUrl = '$_baseUrl/pokemon?offset=279&limit=10'; // ralts
 //    final fetchUrl = '$_baseUrl/pokemon?offset=132&limit=10'; // eevee
@@ -21,13 +31,20 @@ Future<SimplePokemonList> fetchPokemonListFromApi({
 //    final fetchUrl = '$_baseUrl/pokemon?offset=230&limit=10'; // hitmonlee
     final response = await Dio().get(fetchUrl);
     final pokemonList = SimplePokemonList.fromJson(response.data);
+    print('new next url=${pokemonList.next}');
     return pokemonList;
   } catch (e) {
     print(e);
   }
 }
 
-Future<List<Pokemon>> fetchSearchPokemonListFromApi(String searchedPokemonName) async {
+Future<SimplePokemonList> loadMorePokemonFromApi({String nextPageUrl}) {
+
+
+}
+
+Future<List<Pokemon>> fetchSearchPokemonListFromApi(
+    String searchedPokemonName) async {
   print('fetchSearchPokemonListFromApi()');
   try {
     final fetchUrl = '$_baseUrl/pokemon/$searchedPokemonName';
@@ -43,11 +60,11 @@ Future<List<Pokemon>> fetchSearchPokemonListFromApi(String searchedPokemonName) 
 }
 
 Future<List<Pokemon>> fetchPokemonDetailsListFromApi(
-    SimplePokemonList pokemonList) async {
-  print('fetchDetailsList()');
+    SimplePokemonList simplePokemonList) async {
+  print('fetchPokemonDetailsListFromApi()');
   try {
     final List<Response> responses =
-        await _fetchPokemonDetailsResponses(pokemonList);
+        await _fetchPokemonDetailsResponses(simplePokemonList);
 
     // Build list of fetched Pokemon.
     List<Pokemon> pokemonDetailsList = [];
@@ -55,11 +72,6 @@ Future<List<Pokemon>> fetchPokemonDetailsListFromApi(
       final pokemon = _buildPokemonFromResponse(response);
       pokemonDetailsList.add(pokemon);
     }
-
-    // // Since the calls were made concurrently, sort the Pokemon in ascending
-    // // order based on their ID.
-    // pokemonDetailsList
-    //     .sort((pokemonA, pokemonB) => pokemonA.id.compareTo(pokemonB.id));
 
     return pokemonDetailsList;
   } catch (e) {

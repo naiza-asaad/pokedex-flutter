@@ -1,16 +1,22 @@
 
+import 'package:pokedex/models/pokemon.dart';
+
+
+/// SimplePokemonList only contains the name and detailsUrl of each Pokemon.
+/// We fetch the details (types, image, etc.) after fetching simplePokemonList.
 class SimplePokemonList {
   int count;
   String next;
   String previous;
   List<SimplePokemon> simplePokemonList;
+  List<Pokemon> pokemonList;
 
   SimplePokemonList({
     this.count,
     this.next,
     this.previous,
     this.simplePokemonList,
-  });
+  }) : pokemonList = [];
 
   factory SimplePokemonList.fromJson(Map<String, dynamic> parsedJson) {
     var list = parsedJson['results'] as List;
