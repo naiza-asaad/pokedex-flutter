@@ -12,10 +12,11 @@ class PokemonListPage extends StatefulWidget {
 
 class _PokemonListPageState extends State<PokemonListPage> {
   List<Pokemon> _pokemonList;
-  bool isLoading = true;
+  List<Pokemon> _searchResultList;
+  bool _isLoading = true;
+  bool _hasSearched = false;
 
   final _filter = TextEditingController();
-  String _searchText = "";
   Widget _appBarTitle = Text(
     'Pokedex',
     style: TextStyle(
@@ -28,7 +29,7 @@ class _PokemonListPageState extends State<PokemonListPage> {
   Icon _closeIcon = Icon(Icons.close);
   Icon _appBarActionIcon;
 
-  void _onPressSearch() {
+  void _onPressSearchIcon() {
     setState(() {
       if (this._appBarActionIcon.icon == Icons.search) {
         this._appBarActionIcon = _closeIcon;
@@ -37,6 +38,8 @@ class _PokemonListPageState extends State<PokemonListPage> {
         this._appBarActionIcon = _searchIcon;
         this._appBarWidget = _appBarTitle;
         _filter.clear();
+        _hasSearched = false;
+        _searchResultList.clear();
       }
     });
   }
@@ -44,21 +47,25 @@ class _PokemonListPageState extends State<PokemonListPage> {
   @override
   void initState() {
     super.initState();
-    fetchPokemonList();
+    _fetchInitialPokemonList();
 
     _appBarWidget = _appBarTitle;
     _appBarSearch = TextField(
       controller: _filter,
       decoration: InputDecoration(
         prefixIcon: Icon(Icons.search),
-        hintText: 'Pikachu',
+        hintText: 'Search Pokemon',
       ),
+      onSubmitted: _performSearch,
     );
 
     _appBarActionIcon = _searchIcon;
   }
 
-  void fetchPokemonList() async {
+  /// Fetches initial list and search Pokemon list.
+  /// If [searchPokemonName] is given, fetch initial list.
+  /// Otherwise, search for a specific Pokemon.
+  void _fetchInitialPokemonList() async {
     // simplePokemonList only contains the name and detailsUrl of each Pokemon.
     // We fetch the details (types, image, etc.) after fetching simplePokemonList.
     final simplePokemonList = await fetchPokemonListService();
@@ -66,7 +73,7 @@ class _PokemonListPageState extends State<PokemonListPage> {
         await fetchPokemonDetailsListService(simplePokemonList);
 
     setState(() {
-      isLoading = false;
+      _isLoading = false;
     });
   }
 
@@ -78,7 +85,7 @@ class _PokemonListPageState extends State<PokemonListPage> {
         actions: [
           IconButton(
             icon: _appBarActionIcon,
-            onPressed: _onPressSearch,
+            onPressed: _onPressSearchIcon,
           ),
         ],
         elevation: 0,
@@ -91,7 +98,7 @@ class _PokemonListPageState extends State<PokemonListPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (isLoading)
+            if (_isLoading)
               Expanded(child: Center(child: CircularProgressIndicator()))
             else
               Expanded(
@@ -100,10 +107,15 @@ class _PokemonListPageState extends State<PokemonListPage> {
                     maxCrossAxisExtent: 250,
                     childAspectRatio: 3 / 2,
                   ),
-                  itemCount: _pokemonList.length,
+                  itemCount: !_hasSearched ? _pokemonList.length : _searchResultList.length,
                   itemBuilder: (context, index) {
-                    Pokemon pokemon = _pokemonList[index];
-                    return PokemonListCard(pokemon);
+                    if (!_hasSearched) {
+                      Pokemon pokemon = _pokemonList[index];
+                      return PokemonListCard(pokemon);
+                    } else {
+                      Pokemon pokemon = _searchResultList[index];
+                      return PokemonListCard(pokemon);
+                    }
                   },
                 ),
               ),
@@ -111,6 +123,25 @@ class _PokemonListPageState extends State<PokemonListPage> {
         ),
       ),
     );
+  }
+
+  void _performSearch(String searchText) async {
+    print('searchText=$searchText');
+    setState(() {
+      _isLoading = true;
+    });
+
+    final tempPokemonList = await _fetchSearchPokemonList(searchText);
+    setState(() {
+      _hasSearched = true;
+      _searchResultList = tempPokemonList;
+      _isLoading = false;
+    });
+  }
+
+
+  Future<List<Pokemon>> _fetchSearchPokemonList(String searchText) async {
+    return await fetchSearchPokemonListService(searchText);
   }
 }
 

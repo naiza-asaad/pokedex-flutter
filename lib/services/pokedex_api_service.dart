@@ -4,11 +4,22 @@ import 'package:pokedex/models/simple_pokemon_list.dart';
 import 'package:pokedex/services/pokedex_api_helper.dart';
 import 'package:pokedex/utilities/string_extension.dart';
 
-Future<SimplePokemonList> fetchPokemonListService(
-    {int offset = 0, int limit = 20}) async {
-  SimplePokemonList pokemonList =
-      await fetchPokemonListFromApi(limit: limit, offset: offset);
+Future<SimplePokemonList> fetchPokemonListService({
+  int offset = 0,
+  int limit = 20,
+  String searchedPokemonName,
+}) async {
+  SimplePokemonList pokemonList = await fetchPokemonListFromApi(
+    limit: limit,
+    offset: offset,
+  );
   return pokemonList;
+}
+
+Future<List<Pokemon>> fetchSearchPokemonListService(String searchedPokemonName) async {
+  searchedPokemonName = searchedPokemonName.toLowerCase();
+  final searchPokemonList = await fetchSearchPokemonListFromApi(searchedPokemonName);
+  return searchPokemonList;
 }
 
 Future<List<Pokemon>> fetchPokemonDetailsListService(
@@ -18,7 +29,8 @@ Future<List<Pokemon>> fetchPokemonDetailsListService(
   return pokemonDetailsList;
 }
 
-Future<PokemonEvolutionChain> fetchPokemonEvolutionChainService(String speciesUrl) async {
+Future<PokemonEvolutionChain> fetchPokemonEvolutionChainService(
+    String speciesUrl) async {
   return await fetchPokemonEvolutionChainFromApi(speciesUrl);
 }
 

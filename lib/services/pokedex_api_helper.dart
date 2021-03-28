@@ -13,6 +13,7 @@ Future<SimplePokemonList> fetchPokemonListFromApi({
   print('fetchPokemonListFromApi()');
   try {
     final fetchUrl = '$_baseUrl/pokemon';
+    print('fetchUrl=$fetchUrl');
 //    final fetchUrl = '$_baseUrl/pokemon?offset=438&limit=10'; // mime jr
 //     final fetchUrl = '$_baseUrl/pokemon?offset=279&limit=10'; // ralts
 //    final fetchUrl = '$_baseUrl/pokemon?offset=132&limit=10'; // eevee
@@ -20,8 +21,22 @@ Future<SimplePokemonList> fetchPokemonListFromApi({
 //    final fetchUrl = '$_baseUrl/pokemon?offset=230&limit=10'; // hitmonlee
     final response = await Dio().get(fetchUrl);
     final pokemonList = SimplePokemonList.fromJson(response.data);
-
     return pokemonList;
+  } catch (e) {
+    print(e);
+  }
+}
+
+Future<List<Pokemon>> fetchSearchPokemonListFromApi(String searchedPokemonName) async {
+  print('fetchSearchPokemonListFromApi()');
+  try {
+    final fetchUrl = '$_baseUrl/pokemon/$searchedPokemonName';
+    print('search pokemon fetchUrl=$fetchUrl');
+    final response = await Dio().get(fetchUrl);
+    final pokemon = Pokemon.fromJson(response.data);
+    final List<Pokemon> searchResultList = [];
+    searchResultList.add(pokemon);
+    return searchResultList;
   } catch (e) {
     print(e);
   }
