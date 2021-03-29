@@ -55,7 +55,10 @@ Future<List<Pokemon>> fetchSearchPokemonListFromApi(
     searchResultList.add(pokemon);
     return searchResultList;
   } catch (e) {
-    print(e);
+    if (e is DioError) {
+      print(e);
+      return [];
+    }
   }
 }
 

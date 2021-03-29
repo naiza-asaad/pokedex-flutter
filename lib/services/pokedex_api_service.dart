@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:pokedex/models/pokemon.dart';
 import 'package:pokedex/models/pokemon_evolution_chain.dart';
 import 'package:pokedex/models/simple_pokemon_list.dart';

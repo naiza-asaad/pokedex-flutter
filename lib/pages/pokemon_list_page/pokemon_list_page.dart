@@ -13,7 +13,7 @@ class PokemonListPage extends StatefulWidget {
 
 class _PokemonListPageState extends State<PokemonListPage> {
   SimplePokemonList _simplePokemonList;
-  List<Pokemon> _searchResultList;
+  List<Pokemon> _searchResultList = [];
   bool _isLoading = true;
   bool _hasSearched = false;
 
@@ -97,15 +97,32 @@ class _PokemonListPageState extends State<PokemonListPage> {
                     ),
                     itemCount: !_hasSearched
                         ? _simplePokemonList.pokemonList.length
-                        : _searchResultList.length,
+                        : ((_searchResultList == null ||
+                                    _searchResultList.length <= 0) &&
+                                _hasSearched)
+                            ? 1 // If 0, itemBuilder never gets called.
+                            : _searchResultList.length,
                     itemBuilder: (context, index) {
                       if (!_hasSearched) {
                         Pokemon pokemon = _simplePokemonList.pokemonList[index];
                         return PokemonListCard(pokemon);
                       } else {
-                        Pokemon pokemon = _searchResultList[index];
-                        return PokemonListCard(pokemon);
+                        print('on _hasSearched');
+                        if ((_searchResultList == null || _searchResultList.length <= 0)) {
+                          print('no results found');
+                          return Center(child: Text('No Pokemon found'));
+                        } else {
+                          print('found a pokemon');
+                          Pokemon pokemon = _searchResultList[index];
+                          return PokemonListCard(pokemon);
+                        }
                       }
+//                      } else if (_hasSearched && (_searchResultList == null || _searchResultList.length <= 0)) {
+//                        return Center(child: Text('No Pokemon found'));
+//                      } else {
+//                        Pokemon pokemon = _searchResultList[index];
+//                        return PokemonListCard(pokemon);
+//                      }
                     },
                   ),
                 ),
@@ -162,8 +179,9 @@ class _PokemonListPageState extends State<PokemonListPage> {
   }
 
   void _handleScroll() {
-    if (!_isLoading && _scrollController.position.pixels ==
-        _scrollController.position.maxScrollExtent) {
+    if (!_isLoading &&
+        _scrollController.position.pixels ==
+            _scrollController.position.maxScrollExtent) {
       // At the bottom of the list
       print('tried to scroll down at the bottom');
 
@@ -202,6 +220,6 @@ class _PokemonListPageState extends State<PokemonListPage> {
       _isLoading = true;
     });
 
-  _fetchInitialPokemonList();
+    _fetchInitialPokemonList();
   }
 }
