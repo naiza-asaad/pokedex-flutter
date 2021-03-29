@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/material.dart';
@@ -177,8 +179,7 @@ class PokemonTypeList extends StatelessWidget {
   const PokemonTypeList({
     Key key,
     @required List<PokemonType> typeList,
-  })
-      : _typeList = typeList,
+  })  : _typeList = typeList,
         super(key: key);
 
   final List<PokemonType> _typeList;
@@ -219,8 +220,7 @@ class PokemonTypeName extends StatelessWidget {
     Key key,
     @required String name,
     @required String mainTypeName,
-  })
-      : _name = name,
+  })  : _name = name,
         _mainTypeName = mainTypeName,
         super(key: key);
 
@@ -271,10 +271,7 @@ class PokemonPageDetails extends StatelessWidget {
     return Expanded(
       flex: 2,
       child: Container(
-        height: MediaQuery
-            .of(context)
-            .size
-            .height / 2,
+        height: MediaQuery.of(context).size.height / 2,
         padding: EdgeInsets.symmetric(horizontal: 5.0),
         decoration: BoxDecoration(
           color: Colors.white,
@@ -352,11 +349,10 @@ class MovesContainer extends StatelessWidget {
         spacing: 3,
         runSpacing: 3,
         children: moveList
-            .map((move) =>
-            MoveContainerItem(
-              moveName: formatPokemonMoveName(move.name),
-              backgroundColor: itemBackgroundColor,
-            ))
+            .map((move) => MoveContainerItem(
+                  moveName: formatPokemonMoveName(move.name),
+                  backgroundColor: itemBackgroundColor,
+                ))
             .toList(),
       ),
     );
@@ -425,16 +421,15 @@ class AboutContainer extends StatelessWidget {
                   children: [
                     TableCell(child: AboutGridLabel('Height')),
                     TableCell(
-                        child:
-                        AboutGridValue('${pokemon.heightInDecimeters / 10} m')),
+                        child: AboutGridValue(
+                            '${pokemon.heightInDecimeters / 10} m')),
                   ],
                 ),
                 TableRow(
                   children: [
                     TableCell(child: AboutGridLabel('Weight')),
                     TableCell(
-                        child:
-                        AboutGridValue(
+                        child: AboutGridValue(
                             '${pokemon.weightInDecimeters / 10} kg')),
                   ],
                 ),
@@ -473,7 +468,8 @@ class AboutContainer extends StatelessWidget {
 }
 
 class AboutGridLabel extends StatelessWidget {
-  const AboutGridLabel(this.label, {
+  const AboutGridLabel(
+    this.label, {
     Key key,
   }) : super(key: key);
 
@@ -495,7 +491,8 @@ class AboutGridLabel extends StatelessWidget {
 }
 
 class AboutGridValue extends StatelessWidget {
-  const AboutGridValue(this.value, {
+  const AboutGridValue(
+    this.value, {
     Key key,
   }) : super(key: key);
 
@@ -543,8 +540,7 @@ class BaseStatsContainer extends StatelessWidget {
     ];
 
     print(
-        'color=${pokemonColor.toString().replaceAll('Color(', '').replaceAll(
-            ')', '').replaceAll('0x', '')}');
+        'color=${pokemonColor.toString().replaceAll('Color(', '').replaceAll(')', '').replaceAll('0x', '')}');
 
     return [
       charts.Series<BaseStats, String>(
@@ -553,13 +549,11 @@ class BaseStatsContainer extends StatelessWidget {
         measureFn: (BaseStats baseStats, _) => baseStats.statValue,
         data: data,
         labelAccessorFn: (BaseStats baseStats, _) => '${baseStats.statValue}',
-        colorFn: (BaseStats baseStats, _) =>
-            charts.Color.fromHex(
-              //   code: '#F5AC78',
-              // ),
-                code:
-                '#${pokemonColor.toString().replaceAll("Color(", "").replaceAll(
-                    ")", "").replaceAll("0xff", "")}'),
+        colorFn: (BaseStats baseStats, _) => charts.Color.fromHex(
+            //   code: '#F5AC78',
+            // ),
+            code:
+                '#${pokemonColor.toString().replaceAll("Color(", "").replaceAll(")", "").replaceAll("0xff", "")}'),
         // '${baseStats.statName}: ${baseStats.statValue}',
       ),
     ];
@@ -572,7 +566,7 @@ class BaseStatsContainer extends StatelessWidget {
       vertical: false,
       barRendererDecorator: new charts.BarLabelDecorator<String>(),
       primaryMeasureAxis:
-      new charts.NumericAxisSpec(renderSpec: new charts.NoneRenderSpec()),
+          new charts.NumericAxisSpec(renderSpec: new charts.NoneRenderSpec()),
 //       Hide domain axis.
       domainAxis: new charts.OrdinalAxisSpec(
         showAxisLine: false,
@@ -605,11 +599,15 @@ class _EvolutionChainContainerState extends State<EvolutionChainContainer> {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
+//    return Center(
+//      child: GridView.count(
+    return Padding(
+      padding: const EdgeInsets.only(top: 32.0),
       child: GridView.count(
         shrinkWrap: true,
         crossAxisCount: 3,
         children: buildGridChildren(widget.evolutionChain),
+//      ),
       ),
     );
   }
@@ -648,36 +646,82 @@ class _EvolutionChainContainerState extends State<EvolutionChainContainer> {
 
     final basePokemon = evolutionChain.chain;
     final isDisplayingEvolutionOfEevee = !hasStage3Evolutions &&
-        hasStage2Evolutions && stage2Evolutions.length == 8;
+        hasStage2Evolutions &&
+        stage2Evolutions.length == 8;
 
     // ROW 1
     // Column 1
     if (isDisplayingEvolutionOfEevee) {
-      children.add(EvolutionCard(species: stage2Evolutions[0]));
+      children.add(EvolutionCard(
+        species: stage2Evolutions[0],
+        isArrowVertical: true,
+        isArrowOnBottom: true,
+        arrowWidget: rotateIcon45Degrees(Icons.arrow_back),
+      ));
     } else {
       children.add(EvolutionCard());
     }
 
     // Column 2
-    if (hasStage2Evolutions && stage2Evolutions.length == 2 &&
+    if (hasStage2Evolutions &&
+        stage2Evolutions.length == 2 &&
         hasStage3Evolutions) {
-      children.add(EvolutionCard(species: stage2Evolutions[0]));
+      children.add(EvolutionCard(
+        species: stage2Evolutions[0],
+        isArrowOnLeft: true,
+        arrowWidget: rotateIconMinus45Degrees(Icons.arrow_forward),
+      ));
     } else if (isDisplayingEvolutionOfEevee) {
-      children.add(EvolutionCard(species: stage2Evolutions[1]));
+      children.add(EvolutionCard(
+          species: stage2Evolutions[1],
+          isArrowVertical: true,
+          isArrowOnBottom: true,
+          arrowWidget: Icon(Icons.arrow_upward)));
+    } else if (hasStage2Evolutions && stage2Evolutions.length == 3) {
+      children.add(EvolutionCard(
+          isArrowOnLeft: true,
+          arrowWidget: Icon(
+            Icons.arrow_forward,
+          )));
+    } else if (!hasStage3Evolutions &&
+        hasStage2Evolutions &&
+        stage2Evolutions.length == 2) {
+      children.add(EvolutionCard(
+          arrowWidget: Icon(
+        Icons.arrow_forward,
+      )));
     } else {
       children.add(EvolutionCard());
     }
 
     // Column 3
-    if (hasStage3Evolutions && stage3Evolutions.length == 2) {
-      children.add(EvolutionCard(species: stage3Evolutions[0]));
+    if (hasStage3Evolutions &&
+        stage3Evolutions.length == 2 &&
+        stage2Evolutions.length == 1) {
+      children.add(EvolutionCard(
+          species: stage3Evolutions[0],
+          isArrowOnLeft: true,
+          arrowWidget: rotateIconMinus45Degrees(Icons.arrow_forward)));
+    } else if (hasStage3Evolutions &&
+        stage3Evolutions.length == 2 &&
+        stage2Evolutions.length == 2) {
+      children.add(EvolutionCard(
+          species: stage3Evolutions[0],
+          isArrowOnLeft: true,
+          arrowWidget: Icon(Icons.arrow_forward)));
     } else if (hasStage2Evolutions && stage2Evolutions.length == 3) {
       children.add(EvolutionCard(species: stage2Evolutions[0]));
-    } else if (hasStage2Evolutions && !hasStage3Evolutions &&
+    } else if (hasStage2Evolutions &&
+        !hasStage3Evolutions &&
         stage2Evolutions.length == 2) {
       children.add(EvolutionCard(species: stage2Evolutions[0]));
     } else if (isDisplayingEvolutionOfEevee) {
-      children.add(EvolutionCard(species: stage2Evolutions[2]));
+      children.add(EvolutionCard(
+        species: stage2Evolutions[2],
+        isArrowVertical: true,
+        isArrowOnBottom: true,
+        arrowWidget: rotateIconMinus45Degrees(Icons.arrow_forward),
+      ));
     } else {
       children.add(EvolutionCard());
     }
@@ -685,10 +729,30 @@ class _EvolutionChainContainerState extends State<EvolutionChainContainer> {
     // ROW 2
     // Column 1
     if (isDisplayingEvolutionOfEevee) {
-      children.add(EvolutionCard(species: stage2Evolutions[3]));
-    } else if (hasStage2Evolutions) {
+      children.add(EvolutionCard(
+        species: stage2Evolutions[3],
+        isArrowOnLeft: false,
+        arrowWidget: Icon(Icons.arrow_back),
+      ));
+//    } else if (hasStage2Evolutions && (stage2Evolutions.length > 2 || stage3Evolutions.length > 1)) {
+    } else if (hasStage2Evolutions &&
+        stage2Evolutions.length == 2 &&
+        stage3Evolutions.length == 2) {
+      children.add(EvolutionCard(
+        species: evolutionChain.chain,
+      ));
+//    } else if (hasStage2Evolutions) {
+    } else if (hasStage2Evolutions && !hasStage3Evolutions) {
+      children.add(EvolutionCard(
+        species: evolutionChain.chain,
+      ));
+    } else if (hasStage2Evolutions && hasStage3Evolutions) {
       // base pokemon
-      children.add(EvolutionCard(species: evolutionChain.chain));
+      children.add(EvolutionCard(
+        species: evolutionChain.chain,
+        isArrowOnLeft: false,
+        arrowWidget: Icon(Icons.arrow_forward),
+      ));
     } else {
       children.add(EvolutionCard());
     }
@@ -696,28 +760,63 @@ class _EvolutionChainContainerState extends State<EvolutionChainContainer> {
     // Column 2
     if (hasStage2Evolutions &&
         stage2Evolutions.length == 1 &&
-        hasStage3Evolutions) {
+        hasStage3Evolutions &&
+        stage3Evolutions.length == 2) {
       children.add(EvolutionCard(species: stage2Evolutions[0]));
+    } else if (hasStage2Evolutions &&
+        stage2Evolutions.length == 1 &&
+        hasStage3Evolutions) {
+//      children.add(EvolutionCard(species: stage2Evolutions[0]));
+      children.add(EvolutionCard(
+        species: stage2Evolutions[0],
+        isArrowOnLeft: false,
+        arrowWidget: Icon(Icons.arrow_forward),
+      ));
     } else if (!hasStage2Evolutions && !hasStage3Evolutions) {
       children.add(EvolutionCard(species: evolutionChain.chain));
     } else if (isDisplayingEvolutionOfEevee) {
       // eevee
-      children.add(EvolutionCard(species: basePokemon));
+      children.add(EvolutionCard(
+        species: basePokemon,
+      ));
+    } else if (hasStage2Evolutions && stage2Evolutions.length == 3) {
+      children.add(EvolutionCard(
+          isArrowOnLeft: true,
+          arrowWidget: Icon(
+            Icons.arrow_forward,
+          )));
+    } else if (!hasStage3Evolutions &&
+        hasStage2Evolutions &&
+        stage2Evolutions.length == 1) {
+      children.add(EvolutionCard(
+          isArrowOnLeft: true,
+          arrowWidget: Icon(
+            Icons.arrow_forward,
+          )));
     } else {
       children.add(EvolutionCard());
     }
 
     // Column 3
     if (hasStage3Evolutions && stage3Evolutions.length == 1) {
-      children.add(EvolutionCard(species: stage3Evolutions[0]));
+      children.add(EvolutionCard(
+        species: stage3Evolutions[0],
+      ));
+    } else if (!hasStage2Evolutions && !hasStage3Evolutions) {
     } else if (hasStage2Evolutions && stage2Evolutions.length == 3) {
-      children.add(EvolutionCard(species: stage2Evolutions[1]));
+      children.add(EvolutionCard(
+        species: stage2Evolutions[1],
+      ));
     } else if (hasStage2Evolutions &&
         !hasStage3Evolutions &&
         stage2Evolutions.length == 1) {
       children.add(EvolutionCard(species: stage2Evolutions[0]));
     } else if (isDisplayingEvolutionOfEevee) {
-      children.add(EvolutionCard(species: stage2Evolutions[4]));
+      children.add(EvolutionCard(
+        species: stage2Evolutions[4],
+        isArrowOnLeft: true,
+        arrowWidget: Icon(Icons.arrow_forward),
+      ));
     } else {
       children.add(EvolutionCard());
     }
@@ -725,77 +824,239 @@ class _EvolutionChainContainerState extends State<EvolutionChainContainer> {
     // ROW 3
     // Column 1
     if (isDisplayingEvolutionOfEevee) {
-      children.add(EvolutionCard(species: stage2Evolutions[5]));
+      children.add(EvolutionCard(
+        species: stage2Evolutions[5],
+        isArrowVertical: true,
+        isArrowOnBottom: false,
+        arrowWidget: rotateIconMinus45Degrees(Icons.arrow_back),
+      ));
     } else {
       children.add(EvolutionCard());
     }
 
     // Column 2
     if (hasStage3Evolutions && stage2Evolutions.length == 2) {
-      children.add(EvolutionCard(species: stage2Evolutions[1]));
+      children.add(EvolutionCard(
+        species: stage2Evolutions[1],
+        isArrowOnLeft: true,
+        arrowWidget: rotateIcon45Degrees(Icons.arrow_forward),
+      ));
     } else if (isDisplayingEvolutionOfEevee) {
-      children.add(EvolutionCard(species: stage2Evolutions[6]));
+      children.add(EvolutionCard(
+          species: stage2Evolutions[6],
+          isArrowVertical: true,
+          isArrowOnBottom: false,
+          arrowWidget: Icon(Icons.arrow_downward)));
+    } else if (hasStage2Evolutions && stage2Evolutions.length == 3) {
+      children.add(EvolutionCard(
+          isArrowOnLeft: true,
+          arrowWidget: Icon(
+            Icons.arrow_forward,
+          )));
+    } else if (!hasStage3Evolutions &&
+        hasStage2Evolutions &&
+        stage2Evolutions.length == 2) {
+      children.add(EvolutionCard(
+          arrowWidget: Icon(
+        Icons.arrow_forward,
+      )));
     } else {
       children.add(EvolutionCard());
     }
 
     // Column 3
-    if (hasStage3Evolutions && stage3Evolutions.length == 2) {
-      children.add(EvolutionCard(species: stage3Evolutions[1]));
+    if (hasStage3Evolutions &&
+        stage3Evolutions.length == 2 &&
+        stage2Evolutions.length == 1) {
+      children.add(EvolutionCard(
+          species: stage3Evolutions[1],
+          isArrowOnLeft: true,
+          arrowWidget: rotateIcon45Degrees(Icons.arrow_forward)));
+    } else if (hasStage3Evolutions &&
+        stage3Evolutions.length == 2 &&
+        stage2Evolutions.length == 2) {
+      children.add(EvolutionCard(
+          species: stage3Evolutions[0],
+          isArrowOnLeft: true,
+          arrowWidget: Icon(Icons.arrow_forward)));
     } else if (hasStage2Evolutions && stage2Evolutions.length == 3) {
-      children.add(EvolutionCard(species: stage2Evolutions[2]));
-    } else if (hasStage2Evolutions && !hasStage3Evolutions &&
+      children.add(EvolutionCard(
+        species: stage2Evolutions[2],
+      ));
+    } else if (hasStage2Evolutions &&
+        !hasStage3Evolutions &&
         stage2Evolutions.length == 2) {
       children.add(EvolutionCard(species: stage2Evolutions[1]));
     } else if (isDisplayingEvolutionOfEevee) {
-      children.add(EvolutionCard(species: stage2Evolutions[7]));
+      children.add(EvolutionCard(
+        species: stage2Evolutions[7],
+        isArrowVertical: true,
+        isArrowOnBottom: false,
+        arrowWidget: rotateIcon45Degrees(Icons.arrow_forward),
+      ));
     } else {
       children.add(EvolutionCard());
     }
 
     return children;
   }
+
+  Transform rotateIconMinus45Degrees(IconData iconData) {
+    return Transform.rotate(
+      angle: -math.pi / 4,
+      child: Icon(iconData),
+    );
+  }
+
+  Transform rotateIcon45Degrees(IconData iconData) {
+    return Transform.rotate(
+      angle: math.pi / 4,
+      child: Icon(iconData),
+    );
+  }
+
+//  int getCaseEvolutionChain({
+//    bool hasStage2Evolutions,
+//    bool hasStage3Evolutions,
+//    int stage2EvolutionCount,
+//    int stage3EvolutionCount,
+//  }) {
+//    // 8 POSSIBLE EVOLUTION CHAINS:
+//    // Legend:
+//    // 1 -> stage 1 (base pokemon)
+//    // 2 -> stage 2 evolution/s
+//    // 3 -> stage 3 evolution/s
+//
+//    // 1) e.g. bulbasaur, charmander, squirtle
+//    //    1 -> 2 -> 3
+//    //
+//    final bool isCase1EvolutionChain = hasStage3Evolutions &&
+//        hasStage2Evolutions &&
+//        stage2EvolutionCount == 1 &&
+//        stage3EvolutionCount == 1;
+//
+//    // 2) no evolution, e.g. lapras
+//    //    1
+//    final bool isCase2EvolutionChain = !hasStage2Evolutions;
+//
+//    // 3) e.g. rattata
+//    //    1 -> 2
+//    final bool isCase3EvolutionChain = !hasStage3Evolutions &&
+//        hasStage2Evolutions &&
+//        stage2Evolutions.length == 1;
+//
+//    // 4) e.g. eevee
+//    //    2   2   2
+//    //    2   1   2
+//    //    2   2   2
+//    bool isCase4EvolutionChain = !hasStage3Evolutions &&
+//        hasStage2Evolutions &&
+//        stage2Evolutions.length == 8;
+//
+//    // 5) e.g. oddish, poliwag, ralts, cosmog
+//    //          3
+//    //  1 -> 2
+//    //          3
+//    bool isCase5EvolutionChain = hasStage3Evolutions &&
+//        stage3Evolutions.length == 2 &&
+//        hasStage2Evolutions &&
+//        stage2Evolutions.length == 1;
+//
+//    // 6) e.g. slowpoke, nincada, snorunt, clamperl
+//    //     2
+//    //  1
+//    //     2
+//    bool isCase6EvolutionChain = !hasStage3Evolutions &&
+//        hasStage2Evolutions &&
+//        stage2Evolutions.length == 2;
+//
+//    // 7) e.g. tyrogue
+//    //        2
+//    //    1   2
+//    //        2
+//    bool isCase7EvolutionChain = !hasStage3Evolutions &&
+//        hasStage2Evolutions &&
+//        stage2Evolutions.length == 3;
+//
+//    // 8) e.g. wurmple
+//    //        2 -> 3
+//    //    1
+//    //        2 -> 3
+//    bool isCase8EvolutionChain = hasStage3Evolutions &&
+//        stage3Evolutions.length == 2 &&
+//        hasStage2Evolutions &&
+//        stage2Evolutions.length == 2;
+//  }
 }
 
 class EvolutionCard extends StatelessWidget {
   const EvolutionCard({
     Key key,
     this.species,
-    this.isHidden,
+    this.arrowWidget,
+    this.isArrowOnLeft,
+    this.isArrowOnBottom,
+    this.isArrowVertical = false,
   }) : super(key: key);
 
   final EvolvesTo species;
-  final bool isHidden;
+  final Widget arrowWidget;
+  final bool isArrowOnLeft;
+  final bool isArrowOnBottom;
+  final bool isArrowVertical;
 
   @override
   Widget build(BuildContext context) {
     if (species != null) {
-      print('name=${species.pokemonName},imageUrl=${species.imageUrl}');
-    }
-    if (species != null) {
       return Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.blueAccent),
-          borderRadius: BorderRadius.all(Radius.circular(5.0)),
-        ),
-        padding: EdgeInsets.symmetric(vertical: 32.0, horizontal: 8.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
+//        decoration: BoxDecoration(
+//          border: Border.all(color: Colors.blueAccent),
+//          borderRadius: BorderRadius.all(Radius.circular(5.0)),
+//        ),
+//        padding: EdgeInsets.symmetric(vertical: 32.0, horizontal: 8.0),
+        padding: EdgeInsets.only(left: 16.0),
+        child: Row(
           children: [
+            if (isArrowOnLeft != null && isArrowOnLeft)
+              Expanded(child: arrowWidget),
             Expanded(
-              flex: 3,
-              child: Container(
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: CachedNetworkImageProvider(species.imageUrl),
+              flex: 4,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (isArrowVertical && !isArrowOnBottom)
+                    Expanded(child: arrowWidget),
+                  Expanded(
+                    flex: 2,
+                    child: Container(
+                      width: 50,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: CachedNetworkImageProvider(species.imageUrl),
+                        ),
+                      ),
+                    ),
                   ),
-                ),
+                  Expanded(
+                      child: Text('#${formatPokemonId(species.pokemonId)}')),
+                  Expanded(child: Text(species.pokemonName.inCaps)),
+                  if (isArrowVertical && isArrowOnBottom)
+                    Expanded(child: arrowWidget),
+                ],
               ),
             ),
-            Expanded(child: Text('#${formatPokemonId(species.pokemonId)}')),
-            Expanded(child: Text(species.pokemonName.inCaps)),
+            if (isArrowOnLeft != null && !isArrowOnLeft)
+              Expanded(child: arrowWidget)
+            else
+              Expanded(child: Container()),
           ],
         ),
+      );
+    } else if (arrowWidget != null) {
+      return Container(
+        padding: EdgeInsets.symmetric(vertical: 32.0, horizontal: 8.0),
+        child: Center(child: arrowWidget),
       );
     } else {
       return Container(
