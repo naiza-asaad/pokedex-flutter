@@ -177,7 +177,8 @@ class PokemonTypeList extends StatelessWidget {
   const PokemonTypeList({
     Key key,
     @required List<PokemonType> typeList,
-  })  : _typeList = typeList,
+  })
+      : _typeList = typeList,
         super(key: key);
 
   final List<PokemonType> _typeList;
@@ -218,7 +219,8 @@ class PokemonTypeName extends StatelessWidget {
     Key key,
     @required String name,
     @required String mainTypeName,
-  })  : _name = name,
+  })
+      : _name = name,
         _mainTypeName = mainTypeName,
         super(key: key);
 
@@ -269,7 +271,10 @@ class PokemonPageDetails extends StatelessWidget {
     return Expanded(
       flex: 2,
       child: Container(
-        height: MediaQuery.of(context).size.height / 2,
+        height: MediaQuery
+            .of(context)
+            .size
+            .height / 2,
         padding: EdgeInsets.symmetric(horizontal: 5.0),
         decoration: BoxDecoration(
           color: Colors.white,
@@ -347,10 +352,11 @@ class MovesContainer extends StatelessWidget {
         spacing: 3,
         runSpacing: 3,
         children: moveList
-            .map((move) => MoveContainerItem(
-                  moveName: formatPokemonMoveName(move.name),
-                  backgroundColor: itemBackgroundColor,
-                ))
+            .map((move) =>
+            MoveContainerItem(
+              moveName: formatPokemonMoveName(move.name),
+              backgroundColor: itemBackgroundColor,
+            ))
             .toList(),
       ),
     );
@@ -392,9 +398,6 @@ class AboutContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('species??');
-    print(pokemon.species);
-
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -423,7 +426,7 @@ class AboutContainer extends StatelessWidget {
                     TableCell(child: AboutGridLabel('Height')),
                     TableCell(
                         child:
-                            AboutGridValue('${pokemon.heightInDecimeters/10} m')),
+                        AboutGridValue('${pokemon.heightInDecimeters / 10} m')),
                   ],
                 ),
                 TableRow(
@@ -431,7 +434,8 @@ class AboutContainer extends StatelessWidget {
                     TableCell(child: AboutGridLabel('Weight')),
                     TableCell(
                         child:
-                            AboutGridValue('${pokemon.weightInDecimeters/10} kg')),
+                        AboutGridValue(
+                            '${pokemon.weightInDecimeters / 10} kg')),
                   ],
                 ),
                 TableRow(
@@ -469,8 +473,7 @@ class AboutContainer extends StatelessWidget {
 }
 
 class AboutGridLabel extends StatelessWidget {
-  const AboutGridLabel(
-    this.label, {
+  const AboutGridLabel(this.label, {
     Key key,
   }) : super(key: key);
 
@@ -492,8 +495,7 @@ class AboutGridLabel extends StatelessWidget {
 }
 
 class AboutGridValue extends StatelessWidget {
-  const AboutGridValue(
-    this.value, {
+  const AboutGridValue(this.value, {
     Key key,
   }) : super(key: key);
 
@@ -541,7 +543,8 @@ class BaseStatsContainer extends StatelessWidget {
     ];
 
     print(
-        'color=${pokemonColor.toString().replaceAll('Color(', '').replaceAll(')', '').replaceAll('0x', '')}');
+        'color=${pokemonColor.toString().replaceAll('Color(', '').replaceAll(
+            ')', '').replaceAll('0x', '')}');
 
     return [
       charts.Series<BaseStats, String>(
@@ -550,11 +553,13 @@ class BaseStatsContainer extends StatelessWidget {
         measureFn: (BaseStats baseStats, _) => baseStats.statValue,
         data: data,
         labelAccessorFn: (BaseStats baseStats, _) => '${baseStats.statValue}',
-        colorFn: (BaseStats baseStats, _) => charts.Color.fromHex(
-            //   code: '#F5AC78',
-            // ),
-            code:
-                '#${pokemonColor.toString().replaceAll("Color(", "").replaceAll(")", "").replaceAll("0xff", "")}'),
+        colorFn: (BaseStats baseStats, _) =>
+            charts.Color.fromHex(
+              //   code: '#F5AC78',
+              // ),
+                code:
+                '#${pokemonColor.toString().replaceAll("Color(", "").replaceAll(
+                    ")", "").replaceAll("0xff", "")}'),
         // '${baseStats.statName}: ${baseStats.statValue}',
       ),
     ];
@@ -567,7 +572,7 @@ class BaseStatsContainer extends StatelessWidget {
       vertical: false,
       barRendererDecorator: new charts.BarLabelDecorator<String>(),
       primaryMeasureAxis:
-          new charts.NumericAxisSpec(renderSpec: new charts.NoneRenderSpec()),
+      new charts.NumericAxisSpec(renderSpec: new charts.NoneRenderSpec()),
 //       Hide domain axis.
       domainAxis: new charts.OrdinalAxisSpec(
         showAxisLine: false,
@@ -641,13 +646,24 @@ class _EvolutionChainContainerState extends State<EvolutionChainContainer> {
     // Displays the evolution chain in a 3x3 grid.
     // Handles ALL cases of branched evolutions.
 
-    // Row 1
+    final basePokemon = evolutionChain.chain;
+    final isDisplayingEvolutionOfEevee = !hasStage3Evolutions &&
+        hasStage2Evolutions && stage2Evolutions.length == 8;
+
+    // ROW 1
     // Column 1
-    children.add(EvolutionCard());
+    if (isDisplayingEvolutionOfEevee) {
+      children.add(EvolutionCard(species: stage2Evolutions[0]));
+    } else {
+      children.add(EvolutionCard());
+    }
 
     // Column 2
-    if (hasStage2Evolutions && stage2Evolutions.length == 2) {
+    if (hasStage2Evolutions && stage2Evolutions.length == 2 &&
+        hasStage3Evolutions) {
       children.add(EvolutionCard(species: stage2Evolutions[0]));
+    } else if (isDisplayingEvolutionOfEevee) {
+      children.add(EvolutionCard(species: stage2Evolutions[1]));
     } else {
       children.add(EvolutionCard());
     }
@@ -657,13 +673,20 @@ class _EvolutionChainContainerState extends State<EvolutionChainContainer> {
       children.add(EvolutionCard(species: stage3Evolutions[0]));
     } else if (hasStage2Evolutions && stage2Evolutions.length == 3) {
       children.add(EvolutionCard(species: stage2Evolutions[0]));
+    } else if (hasStage2Evolutions && !hasStage3Evolutions &&
+        stage2Evolutions.length == 2) {
+      children.add(EvolutionCard(species: stage2Evolutions[0]));
+    } else if (isDisplayingEvolutionOfEevee) {
+      children.add(EvolutionCard(species: stage2Evolutions[2]));
     } else {
       children.add(EvolutionCard());
     }
 
-    // Row 2
+    // ROW 2
     // Column 1
-    if (hasStage2Evolutions) {
+    if (isDisplayingEvolutionOfEevee) {
+      children.add(EvolutionCard(species: stage2Evolutions[3]));
+    } else if (hasStage2Evolutions) {
       // base pokemon
       children.add(EvolutionCard(species: evolutionChain.chain));
     } else {
@@ -677,6 +700,9 @@ class _EvolutionChainContainerState extends State<EvolutionChainContainer> {
       children.add(EvolutionCard(species: stage2Evolutions[0]));
     } else if (!hasStage2Evolutions && !hasStage3Evolutions) {
       children.add(EvolutionCard(species: evolutionChain.chain));
+    } else if (isDisplayingEvolutionOfEevee) {
+      // eevee
+      children.add(EvolutionCard(species: basePokemon));
     } else {
       children.add(EvolutionCard());
     }
@@ -690,17 +716,25 @@ class _EvolutionChainContainerState extends State<EvolutionChainContainer> {
         !hasStage3Evolutions &&
         stage2Evolutions.length == 1) {
       children.add(EvolutionCard(species: stage2Evolutions[0]));
+    } else if (isDisplayingEvolutionOfEevee) {
+      children.add(EvolutionCard(species: stage2Evolutions[4]));
     } else {
       children.add(EvolutionCard());
     }
 
-    // Row 3
+    // ROW 3
     // Column 1
-    children.add(EvolutionCard());
+    if (isDisplayingEvolutionOfEevee) {
+      children.add(EvolutionCard(species: stage2Evolutions[5]));
+    } else {
+      children.add(EvolutionCard());
+    }
 
     // Column 2
     if (hasStage3Evolutions && stage2Evolutions.length == 2) {
       children.add(EvolutionCard(species: stage2Evolutions[1]));
+    } else if (isDisplayingEvolutionOfEevee) {
+      children.add(EvolutionCard(species: stage2Evolutions[6]));
     } else {
       children.add(EvolutionCard());
     }
@@ -710,6 +744,11 @@ class _EvolutionChainContainerState extends State<EvolutionChainContainer> {
       children.add(EvolutionCard(species: stage3Evolutions[1]));
     } else if (hasStage2Evolutions && stage2Evolutions.length == 3) {
       children.add(EvolutionCard(species: stage2Evolutions[2]));
+    } else if (hasStage2Evolutions && !hasStage3Evolutions &&
+        stage2Evolutions.length == 2) {
+      children.add(EvolutionCard(species: stage2Evolutions[1]));
+    } else if (isDisplayingEvolutionOfEevee) {
+      children.add(EvolutionCard(species: stage2Evolutions[7]));
     } else {
       children.add(EvolutionCard());
     }
