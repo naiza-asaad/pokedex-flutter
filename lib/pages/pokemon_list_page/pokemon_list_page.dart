@@ -13,9 +13,12 @@ class PokemonListPage extends StatefulWidget {
 
 class _PokemonListPageState extends State<PokemonListPage> {
   SimplePokemonList _simplePokemonList;
+
+//  int _pokemonListLength = 0;
   List<Pokemon> _searchResultList = [];
   bool _isLoading = true;
   bool _hasSearched = false;
+  bool _isLoadingMorePokemon = false;
 
   final _filter = TextEditingController();
   Widget _appBarTitle = Text(
@@ -89,41 +92,44 @@ class _PokemonListPageState extends State<PokemonListPage> {
               Expanded(
                 child: RefreshIndicator(
                   onRefresh: _handleRefresh,
-                  child: GridView.builder(
+                  child: CustomScrollView(
                     controller: _scrollController,
-                    gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                      maxCrossAxisExtent: 250,
-                      childAspectRatio: 3 / 2,
-                    ),
-                    itemCount: !_hasSearched
-                        ? _simplePokemonList.pokemonList.length
-                        : ((_searchResultList == null ||
-                                    _searchResultList.length <= 0) &&
-                                _hasSearched)
-                            ? 1 // If 0, itemBuilder never gets called.
-                            : _searchResultList.length,
-                    itemBuilder: (context, index) {
-                      if (!_hasSearched) {
-                        Pokemon pokemon = _simplePokemonList.pokemonList[index];
-                        return PokemonListCard(pokemon);
-                      } else {
-                        print('on _hasSearched');
-                        if ((_searchResultList == null || _searchResultList.length <= 0)) {
-                          print('no results found');
-                          return Center(child: Text('No Pokemon found'));
-                        } else {
-                          print('found a pokemon');
-                          Pokemon pokemon = _searchResultList[index];
-                          return PokemonListCard(pokemon);
-                        }
-                      }
-//                      } else if (_hasSearched && (_searchResultList == null || _searchResultList.length <= 0)) {
-//                        return Center(child: Text('No Pokemon found'));
-//                      } else {
-//                        Pokemon pokemon = _searchResultList[index];
-//                        return PokemonListCard(pokemon);
-//                      }
-                    },
+                    slivers: [
+                      SliverGrid(
+                        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                          maxCrossAxisExtent: 250,
+                          childAspectRatio: 3 / 2,
+                        ),
+                        delegate: SliverChildBuilderDelegate(
+                          (context, index) {
+                            if (!_hasSearched) {
+                              Pokemon pokemon =
+                                  _simplePokemonList.pokemonList[index];
+                              return PokemonListCard(pokemon);
+                            } else {
+                              if ((_searchResultList == null ||
+                                  _searchResultList.length <= 0)) {
+                                print('no results found');
+                                return Center(child: Text('No Pokemon found'));
+                              } else {
+                                print('found a pokemon');
+                                Pokemon pokemon = _searchResultList[index];
+                                return PokemonListCard(pokemon);
+                              }
+                            }
+                          },
+//                          childCount: _simplePokemonList.pokemonList.length,
+                          childCount: !_hasSearched
+                              ? _simplePokemonList.pokemonList.length
+                              : ((_searchResultList == null ||
+                                          _searchResultList.length <= 0) &&
+                                      _hasSearched)
+                                  ? 1 // If 0, itemBuilder never gets called.
+                                  : _searchResultList.length,
+                        ),
+                      ),
+                      _buildProgressIndicatorFooter(),
+                    ],
                   ),
                 ),
               ),
@@ -157,6 +163,7 @@ class _PokemonListPageState extends State<PokemonListPage> {
 
     setState(() {
       _isLoading = false;
+//      _pokemonListLength = _simplePokemonList.pokemonList.length + 1;
     });
   }
 
@@ -180,22 +187,18 @@ class _PokemonListPageState extends State<PokemonListPage> {
 
   void _handleScroll() {
     if (!_isLoading &&
+        !_isLoadingMorePokemon &&
         _scrollController.position.pixels ==
             _scrollController.position.maxScrollExtent) {
       // At the bottom of the list
       print('tried to scroll down at the bottom');
 
+      setState(() {
+        _isLoadingMorePokemon = true;
+      });
+
       _loadMorePokemon();
     }
-//    if (_scrollController.position.atEdge) {
-//      if (_scrollController.position.pixels == 0) {
-//        // At the top of the list
-//        print('tried to scroll up at the top');
-//      } else {
-//        // At the bottom of the list
-//        print('tried to scroll down at the bottom');
-//      }
-//    }
   }
 
   /// Loads more Pokemon list and appends to current list.
@@ -210,6 +213,8 @@ class _PokemonListPageState extends State<PokemonListPage> {
 
     setState(() {
       _isLoading = false;
+      _isLoadingMorePokemon = false;
+//      _pokemonListLength = _simplePokemonList.pokemonList.length + 1;
     });
   }
 
@@ -221,5 +226,34 @@ class _PokemonListPageState extends State<PokemonListPage> {
     });
 
     _fetchInitialPokemonList();
+  }
+
+  _buildProgressIndicatorFooter() {
+    print('build footer');
+
+    if (!_isLoadingMorePokemon) {
+      return SliverToBoxAdapter(
+        child: SizedBox(
+          height: 100.0,
+        ),
+      );
+    }
+
+    return SliverToBoxAdapter(
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: SizedBox(
+            child: Container(
+              child: CircularProgressIndicator(
+                strokeWidth: 2.0,
+              ),
+              width: 35.0,
+              height: 35.0,
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
