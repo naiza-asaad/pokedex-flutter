@@ -43,8 +43,10 @@ const kPokemonPageHeaderPadding = const EdgeInsets.only(
   bottom: 8.0,
   left: 16.0,
 );
-const kPokemonPageHeaderImageWidth = 100.0;
-const kPokemonPageHeaderImageHeight = 100.0;
+//const kPokemonPageHeaderImageWidth = 100.0;
+//const kPokemonPageHeaderImageHeight = 100.0;
+const kPokemonPageHeaderImageWidth = 200.0;
+const kPokemonPageHeaderImageHeight = 200.0;
 const kPokemonPageHeaderRow1Flex = 2;
 const kPokemonPageHeaderTypeListTopPadding = const EdgeInsets.only(top: 4.0);
 const kPokemonPageHeaderTypeNamePadding = const EdgeInsets.symmetric(
@@ -80,5 +82,9 @@ const kEvolutionRowDetailsFlex = 4;
 const kEvolutionColumnDetailsFlex = 2;
 const kEvolutionColumnDetailsWidth = 50.0;
 const kEvolutionColumnDetailsHeight = 50.0;
-const kEvolutionArrowPadding = EdgeInsets.symmetric(vertical: 32.0, horizontal: 8.0);
-const kEvolutionCardEmptyPadding = EdgeInsets.symmetric(vertical: 32.0, horizontal: 8.0);
+const kEvolutionArrowPadding =
+    EdgeInsets.symmetric(vertical: 32.0, horizontal: 8.0);
+const kEvolutionCardEmptyPadding =
+    EdgeInsets.symmetric(vertical: 32.0, horizontal: 8.0);
+
+final debugBorder = Border.all(color: Colors.blueAccent);

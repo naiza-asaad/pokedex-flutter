@@ -65,14 +65,39 @@ class _CustomScaffoldState extends State<CustomScaffold> {
     return Theme(
       child: Scaffold(
         appBar: AppBar(),
-        body: Column(
+        body: Stack(
           children: [
-            PokemonPageHeader(
-              pokemon: widget.pokemon,
+            Column(
+              children: [
+                PokemonPageHeader(
+                  pokemon: widget.pokemon,
+                ),
+                PokemonPageDetails(
+                  futurePokemon: futurePokemon,
+                  pokemonColor: widget.primaryColor,
+                ),
+              ],
             ),
-            PokemonPageDetails(
-              futurePokemon: futurePokemon,
-              pokemonColor: widget.primaryColor,
+            if (MediaQuery.of(context).orientation == Orientation.portrait) Align(
+              alignment: Alignment.lerp(
+                Alignment.topCenter,
+                Alignment.center,
+                0.25,
+              ),
+              child: Hero(
+                tag: 'pokemonImage${widget.pokemon.imageUrl}',
+                child: Container(
+                  width: kPokemonPageHeaderImageWidth,
+                  height: kPokemonPageHeaderImageHeight,
+                  decoration: BoxDecoration(
+//                    border: debugBorder,
+                    image: DecorationImage(
+                      image:
+                          CachedNetworkImageProvider(widget.pokemon.imageUrl),
+                    ),
+                  ),
+                ),
+              ),
             ),
           ],
         ),
@@ -99,36 +124,38 @@ class PokemonPageHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: kPokemonPageHeaderPadding,
-      child: Row(
-        children: [
-          Expanded(
-            flex: kPokemonPageHeaderRow1Flex,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                PokemonName(name: pokemon.name),
-                PokemonId(id: pokemon.id),
-                PokemonTypeList(typeList: pokemon.typeList),
-              ],
+    return Expanded(
+      child: Padding(
+        padding: kPokemonPageHeaderPadding,
+        child: Row(
+          children: [
+            Expanded(
+              flex: kPokemonPageHeaderRow1Flex,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  PokemonName(name: pokemon.name),
+                  PokemonId(id: pokemon.id),
+                  PokemonTypeList(typeList: pokemon.typeList),
+                ],
+              ),
             ),
-          ),
-          Expanded(
-            child: Hero(
-              tag: 'pokemonImage${pokemon.imageUrl}',
-              child: Container(
-                width: kPokemonPageHeaderImageWidth,
-                height: kPokemonPageHeaderImageHeight,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: CachedNetworkImageProvider(pokemon.imageUrl),
+            if (MediaQuery.of(context).orientation == Orientation.landscape) Expanded(
+              child: Hero(
+                tag: 'pokemonImage${pokemon.imageUrl}',
+                child: Container(
+                  width: kPokemonPageHeaderImageWidth,
+                  height: kPokemonPageHeaderImageHeight,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: CachedNetworkImageProvider(pokemon.imageUrl),
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -328,6 +355,7 @@ class MovesContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
+      padding: const EdgeInsets.only(top: 8.0, left: 4.0, right: 4.0,),
       child: Wrap(
         direction: Axis.horizontal,
         spacing: kMovesContainerWrapSpacing,
