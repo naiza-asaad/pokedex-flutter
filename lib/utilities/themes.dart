@@ -41,8 +41,9 @@ class PokedexTheme {
         color: Colors.white,
       ),
       bodyText2: TextStyle(
-        fontSize: 22.0,
-        color: textColorBlueGrey,
+        fontSize: 18.0,
+//        color: textColorBlueGrey,
+        color: textColorWhite,
       ),
     ),
     cardTheme: CardTheme(

@@ -73,6 +73,7 @@ const kFlavorTextPadding = const EdgeInsets.only(
   bottom: 16.0,
 );
 const kAboutGridTextPadding = const EdgeInsets.all(4.0);
+BorderSide aboutTableBorderInside(Color color) => BorderSide(color: color);
 // EvolutionChainContainer
 const kEvolutionChainContainerPadding = const EdgeInsets.only(top: 32.0);
 const kEvolutionChainGridDimension = 3; // 3x3 grid

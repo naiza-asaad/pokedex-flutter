@@ -78,27 +78,27 @@ class _CustomScaffoldState extends State<CustomScaffold> {
                 ),
               ],
             ),
-            if (MediaQuery.of(context).orientation == Orientation.portrait) Align(
-              alignment: Alignment.lerp(
-                Alignment.topCenter,
-                Alignment.center,
-                0.25,
-              ),
-              child: Hero(
-                tag: 'pokemonImage${widget.pokemon.imageUrl}',
-                child: Container(
-                  width: kPokemonPageHeaderImageWidth,
-                  height: kPokemonPageHeaderImageHeight,
-                  decoration: BoxDecoration(
-//                    border: debugBorder,
-                    image: DecorationImage(
-                      image:
-                          CachedNetworkImageProvider(widget.pokemon.imageUrl),
+            if (MediaQuery.of(context).orientation == Orientation.portrait)
+              Align(
+                alignment: Alignment.lerp(
+                  Alignment.topCenter,
+                  Alignment.center,
+                  0.25,
+                ),
+                child: Hero(
+                  tag: 'pokemonImage${widget.pokemon.imageUrl}',
+                  child: Container(
+                    width: kPokemonPageHeaderImageWidth,
+                    height: kPokemonPageHeaderImageHeight,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image:
+                            CachedNetworkImageProvider(widget.pokemon.imageUrl),
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
           ],
         ),
       ),
@@ -140,20 +140,21 @@ class PokemonPageHeader extends StatelessWidget {
                 ],
               ),
             ),
-            if (MediaQuery.of(context).orientation == Orientation.landscape) Expanded(
-              child: Hero(
-                tag: 'pokemonImage${pokemon.imageUrl}',
-                child: Container(
-                  width: kPokemonPageHeaderImageWidth,
-                  height: kPokemonPageHeaderImageHeight,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: CachedNetworkImageProvider(pokemon.imageUrl),
+            if (MediaQuery.of(context).orientation == Orientation.landscape)
+              Expanded(
+                child: Hero(
+                  tag: 'pokemonImage${pokemon.imageUrl}',
+                  child: Container(
+                    width: kPokemonPageHeaderImageWidth,
+                    height: kPokemonPageHeaderImageHeight,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: CachedNetworkImageProvider(pokemon.imageUrl),
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
           ],
         ),
       ),
@@ -299,7 +300,7 @@ class PokemonPageDetails extends StatelessWidget {
                   children: [
                     Container(
                       child: TabBar(
-                        labelColor: pokemonColor,
+                        labelColor: darken(pokemonColor),
                         indicatorColor: Theme.of(context).indicatorColor,
                         unselectedLabelColor:
                             Theme.of(context).unselectedWidgetColor,
@@ -314,7 +315,10 @@ class PokemonPageDetails extends StatelessWidget {
                     Expanded(
                       child: TabBarView(
                         children: [
-                          AboutContainer(pokemon: snapshot.data),
+                          AboutContainer(
+                            pokemon: snapshot.data,
+                            pokemonColor: pokemonColor,
+                          ),
                           BaseStatsContainer(
                             baseStats: snapshot.data.baseStats,
                             pokemonColor: pokemonColor,
@@ -355,7 +359,11 @@ class MovesContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.only(top: 8.0, left: 4.0, right: 4.0,),
+      padding: const EdgeInsets.only(
+        top: 8.0,
+        left: 4.0,
+        right: 4.0,
+      ),
       child: Wrap(
         direction: Axis.horizontal,
         spacing: kMovesContainerWrapSpacing,
@@ -398,9 +406,11 @@ class AboutContainer extends StatelessWidget {
   const AboutContainer({
     Key key,
     @required this.pokemon,
+    @required this.pokemonColor,
   }) : super(key: key);
 
   final Pokemon pokemon;
+  final Color pokemonColor;
 
   @override
   Widget build(BuildContext context) {
@@ -410,51 +420,104 @@ class AboutContainer extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
+            Container(
               padding: kFlavorTextPadding,
-              child: Text(
-                pokemon.species.flavorTextEntry1,
-                style: Theme.of(context).textTheme.headline2.copyWith(
-                      fontWeight: FontWeight.normal,
-                    ),
+//              decoration: BoxDecoration(border: debugBorder),
+              child: Padding(
+                padding: kFlavorTextPadding,
+                child: Text(
+                  pokemon.species.flavorTextEntry1,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodyText2.copyWith(
+                        fontWeight: FontWeight.normal,
+                        color: darken(pokemonColor),
+                      ),
+                ),
               ),
             ),
             Table(
-              border: TableBorder.all(),
+//              border: TableBorder.symmetric(inside: BorderSide.none, outside: BorderSide(color: pokemonColor)),
+              border: TableBorder(
+                verticalInside: aboutTableBorderInside(pokemonColor),
+                horizontalInside: aboutTableBorderInside(pokemonColor),
+                top: aboutTableBorderInside(pokemonColor),
+                left: aboutTableBorderInside(pokemonColor),
+                right: aboutTableBorderInside(pokemonColor),
+                bottom: aboutTableBorderInside(pokemonColor),
+              ),
               columnWidths: const <int, TableColumnWidth>{
                 0: IntrinsicColumnWidth(),
                 1: FlexColumnWidth(),
               },
               children: <TableRow>[
                 TableRow(
+                  decoration: BoxDecoration(
+                    color: pokemonColor,
+                  ),
                   children: [
-                    TableCell(child: AboutGridLabel('Height')),
+                    TableCell(
+                      child: AboutGridLabel(
+                        'Height',
+                        pokemonColor: pokemonColor,
+                      ),
+                    ),
                     TableCell(
                       child: AboutGridValue(
-                          '${pokemon.heightInDecimeters / 10} m'),
+                        '${pokemon.heightInDecimeters / 10} m',
+                      ),
                     ),
                   ],
                 ),
                 TableRow(
+                  decoration: BoxDecoration(
+                    color: lighten(pokemonColor),
+                  ),
                   children: [
-                    TableCell(child: AboutGridLabel('Weight')),
+                    TableCell(
+                      child: AboutGridLabel(
+                        'Weight',
+                        pokemonColor: pokemonColor,
+                      ),
+                    ),
                     TableCell(
                       child: AboutGridValue(
-                          '${pokemon.weightInDecimeters / 10} kg'),
+                        '${pokemon.weightInDecimeters / 10} kg',
+                      ),
                     ),
                   ],
                 ),
                 TableRow(
+                  decoration: BoxDecoration(
+                    color: pokemonColor,
+                  ),
                   children: [
-                    TableCell(child: AboutGridLabel('Abilities')),
-                    TableCell(child: AboutGridValue(getAbilitiesString())),
+                    TableCell(
+                      child: AboutGridLabel(
+                        'Abilities',
+                        pokemonColor: pokemonColor,
+                      ),
+                    ),
+                    TableCell(
+                      child: AboutGridValue(
+                        getAbilitiesString(),
+                      ),
+                    ),
                   ],
                 ),
                 TableRow(
+                  decoration: BoxDecoration(
+                    color: lighten(pokemonColor),
+                  ),
                   children: [
-                    TableCell(child: AboutGridLabel('Base Experience')),
                     TableCell(
-                        child: AboutGridValue('${pokemon.baseExperience} xp')),
+                      child: AboutGridLabel(
+                        'Base Experience',
+                        pokemonColor: pokemonColor,
+                      ),
+                    ),
+                    TableCell(
+                      child: AboutGridValue('${pokemon.baseExperience} xp'),
+                    ),
                   ],
                 ),
               ],
@@ -482,9 +545,11 @@ class AboutGridLabel extends StatelessWidget {
   const AboutGridLabel(
     this.label, {
     Key key,
+    this.pokemonColor,
   }) : super(key: key);
 
   final String label;
+  final Color pokemonColor;
 
   @override
   Widget build(BuildContext context) {
@@ -492,7 +557,11 @@ class AboutGridLabel extends StatelessWidget {
       padding: kAboutGridTextPadding,
       child: Text(
         label,
-        style: Theme.of(context).textTheme.bodyText2,
+        textAlign: TextAlign.right,
+        style: Theme.of(context).textTheme.bodyText2.copyWith(
+              fontSize: 18.0,
+//              color: pokemonColor,
+            ),
       ),
     );
   }
@@ -513,7 +582,7 @@ class AboutGridValue extends StatelessWidget {
       child: Text(
         value,
         style: Theme.of(context).textTheme.bodyText2.copyWith(
-              color: Colors.black,
+//              color: Colors.black,
             ),
       ),
     );
