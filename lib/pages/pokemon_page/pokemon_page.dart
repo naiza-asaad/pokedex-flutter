@@ -7,8 +7,10 @@ import 'package:pokedex/models/pokemon.dart';
 import 'package:pokedex/models/pokemon_evolution_chain.dart';
 import 'package:pokedex/services/pokedex_api_service.dart';
 import 'package:pokedex/utilities/color_utilities.dart';
+import 'package:pokedex/utilities/global_constants.dart';
 import 'package:pokedex/utilities/pokemon_color_picker.dart';
 import 'package:pokedex/utilities/string_extension.dart';
+import 'package:pokedex/utilities/themes.dart';
 
 class PokemonPage extends StatefulWidget {
   static const String route = '/pokemon';
@@ -62,8 +64,7 @@ class _CustomScaffoldState extends State<CustomScaffold> {
   Widget build(BuildContext context) {
     return Theme(
       child: Scaffold(
-        appBar: AppBar(elevation: 0.0),
-        backgroundColor: widget.primaryColor,
+        appBar: AppBar(),
         body: Column(
           children: [
             PokemonPageHeader(
@@ -76,10 +77,14 @@ class _CustomScaffoldState extends State<CustomScaffold> {
           ],
         ),
       ),
-      data: ThemeData(
-        brightness: Brightness.light,
+      data: PokedexTheme.themeRegular.copyWith(
+        scaffoldBackgroundColor: widget.primaryColor,
         primaryColor: widget.primaryColor,
       ),
+//      data: ThemeData(
+//        brightness: Brightness.light,
+//        primaryColor: widget.primaryColor,
+//      ),
     );
   }
 }
@@ -95,15 +100,11 @@ class PokemonPageHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(
-        top: 8.0,
-        bottom: 8.0,
-        left: 16.0,
-      ),
+      padding: kPokemonPageHeaderPadding,
       child: Row(
         children: [
           Expanded(
-            flex: 2,
+            flex: kPokemonPageHeaderRow1Flex,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -117,8 +118,8 @@ class PokemonPageHeader extends StatelessWidget {
             child: Hero(
               tag: 'pokemonImage${pokemon.imageUrl}',
               child: Container(
-                width: 100,
-                height: 100,
+                width: kPokemonPageHeaderImageWidth,
+                height: kPokemonPageHeaderImageHeight,
                 decoration: BoxDecoration(
                   image: DecorationImage(
                     image: CachedNetworkImageProvider(pokemon.imageUrl),
@@ -145,11 +146,7 @@ class PokemonName extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       name,
-      style: TextStyle(
-        color: Colors.white,
-        fontWeight: FontWeight.bold,
-        fontSize: 32.0,
-      ),
+      style: Theme.of(context).textTheme.headline1,
     );
   }
 }
@@ -166,11 +163,7 @@ class PokemonId extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       '#${formatPokemonId(id)}',
-      style: TextStyle(
-        color: Colors.white,
-        fontWeight: FontWeight.bold,
-        fontSize: 16.0,
-      ),
+      style: Theme.of(context).textTheme.headline3,
     );
   }
 }
@@ -189,7 +182,7 @@ class PokemonTypeList extends StatelessWidget {
     if (_typeList.length > 1) {
       // Pokemon has 2 types
       return Padding(
-        padding: const EdgeInsets.only(top: 4.0),
+        padding: kPokemonPageHeaderTypeListTopPadding,
         child: Row(
           children: [
             PokemonTypeName(
@@ -205,7 +198,7 @@ class PokemonTypeList extends StatelessWidget {
       );
     } else {
       return Padding(
-        padding: const EdgeInsets.only(top: 4.0),
+        padding: kPokemonPageHeaderTypeListTopPadding,
         child: PokemonTypeName(
           name: _typeList[0].type.name,
           mainTypeName: _typeList[0].type.name,
@@ -230,27 +223,18 @@ class PokemonTypeName extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(
-        vertical: 4.0,
-        horizontal: 12.0,
-      ),
-      margin: EdgeInsets.only(right: 8.0),
+      padding: kPokemonPageHeaderTypeNamePadding,
+      margin: kPokemonPageHeaderTypeNameMargin,
       decoration: BoxDecoration(
         color: lighten(PokemonColorPicker.getColor(_mainTypeName)),
         border: Border.all(
-          color: Colors.transparent,
+          color: kPokemonTypeBorderColor,
         ),
-        borderRadius: BorderRadius.all(
-          Radius.circular(20),
-        ),
+        borderRadius: kPokemonTypeBorderRadius,
       ),
       child: Text(
         _name.inCaps,
-        style: TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
-          fontSize: 14.0,
-        ),
+        style: Theme.of(context).textTheme.headline4,
       ),
     );
   }
@@ -269,29 +253,29 @@ class PokemonPageDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      flex: 2,
+      flex: kPokemonPageDetailsFlex,
       child: Container(
         height: MediaQuery.of(context).size.height / 2,
-        padding: EdgeInsets.symmetric(horizontal: 5.0),
+        padding: kPokemonPageDetailsPadding,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20.0),
-            topRight: Radius.circular(20.0),
-          ),
+          borderRadius: kPokemonPageDetailsBorderRadius,
         ),
         child: FutureBuilder<Pokemon>(
           future: futurePokemon,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               return DefaultTabController(
-                length: 4,
-                initialIndex: 0,
+                length: kPokemonPageDetailsTabCount,
+                initialIndex: kPokemonPageDetailsDefaultTabIndex,
                 child: Column(
                   children: [
                     Container(
                       child: TabBar(
-                        labelColor: Colors.indigo,
+                        labelColor: pokemonColor,
+                        indicatorColor: Theme.of(context).indicatorColor,
+                        unselectedLabelColor:
+                            Theme.of(context).unselectedWidgetColor,
                         tabs: [
                           Tab(text: 'About'),
                           Tab(text: 'Base Stats'),
@@ -346,8 +330,8 @@ class MovesContainer extends StatelessWidget {
     return SingleChildScrollView(
       child: Wrap(
         direction: Axis.horizontal,
-        spacing: 3,
-        runSpacing: 3,
+        spacing: kMovesContainerWrapSpacing,
+        runSpacing: kMovesContainerWrapRunSpacing,
         children: moveList
             .map((move) => MoveContainerItem(
                   moveName: formatPokemonMoveName(move.name),
@@ -372,13 +356,11 @@ class MoveContainerItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(8.0),
+      padding: kMoveItemPadding,
       color: backgroundColor,
       child: Text(
         moveName,
-        style: TextStyle(
-          color: Colors.white,
-        ),
+        style: Theme.of(context).textTheme.bodyText1,
       ),
     );
   }
@@ -396,18 +378,17 @@ class AboutContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: kAboutContainerPadding,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.only(
-                top: 8.0,
-                bottom: 16.0,
-              ),
+              padding: kFlavorTextPadding,
               child: Text(
                 pokemon.species.flavorTextEntry1,
-                style: TextStyle(fontSize: 24.0),
+                style: Theme.of(context).textTheme.headline2.copyWith(
+                      fontWeight: FontWeight.normal,
+                    ),
               ),
             ),
             Table(
@@ -421,16 +402,18 @@ class AboutContainer extends StatelessWidget {
                   children: [
                     TableCell(child: AboutGridLabel('Height')),
                     TableCell(
-                        child: AboutGridValue(
-                            '${pokemon.heightInDecimeters / 10} m')),
+                      child: AboutGridValue(
+                          '${pokemon.heightInDecimeters / 10} m'),
+                    ),
                   ],
                 ),
                 TableRow(
                   children: [
                     TableCell(child: AboutGridLabel('Weight')),
                     TableCell(
-                        child: AboutGridValue(
-                            '${pokemon.weightInDecimeters / 10} kg')),
+                      child: AboutGridValue(
+                          '${pokemon.weightInDecimeters / 10} kg'),
+                    ),
                   ],
                 ),
                 TableRow(
@@ -478,13 +461,10 @@ class AboutGridLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(4.0),
+      padding: kAboutGridTextPadding,
       child: Text(
         label,
-        style: TextStyle(
-          fontSize: 22.0,
-          color: Colors.blueGrey,
-        ),
+        style: Theme.of(context).textTheme.bodyText2,
       ),
     );
   }
@@ -501,12 +481,12 @@ class AboutGridValue extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(4.0),
+      padding: kAboutGridTextPadding,
       child: Text(
         value,
-        style: TextStyle(
-          fontSize: 22.0,
-        ),
+        style: Theme.of(context).textTheme.bodyText2.copyWith(
+              color: Colors.black,
+            ),
       ),
     );
   }
@@ -602,10 +582,10 @@ class _EvolutionChainContainerState extends State<EvolutionChainContainer> {
 //    return Center(
 //      child: GridView.count(
     return Padding(
-      padding: const EdgeInsets.only(top: 32.0),
+      padding: kEvolutionChainContainerPadding,
       child: GridView.count(
         shrinkWrap: true,
-        crossAxisCount: 3,
+        crossAxisCount: kEvolutionChainGridDimension,
         children: buildGridChildren(widget.evolutionChain),
 //      ),
       ),
@@ -876,7 +856,7 @@ class _EvolutionChainContainerState extends State<EvolutionChainContainer> {
         stage3Evolutions.length == 2 &&
         stage2Evolutions.length == 2) {
       children.add(EvolutionCard(
-          species: stage3Evolutions[0],
+          species: stage3Evolutions[1],
           isArrowOnLeft: true,
           arrowWidget: Icon(Icons.arrow_forward)));
     } else if (hasStage2Evolutions && stage2Evolutions.length == 3) {
@@ -914,79 +894,6 @@ class _EvolutionChainContainerState extends State<EvolutionChainContainer> {
       child: Icon(iconData),
     );
   }
-
-//  int getCaseEvolutionChain({
-//    bool hasStage2Evolutions,
-//    bool hasStage3Evolutions,
-//    int stage2EvolutionCount,
-//    int stage3EvolutionCount,
-//  }) {
-//    // 8 POSSIBLE EVOLUTION CHAINS:
-//    // Legend:
-//    // 1 -> stage 1 (base pokemon)
-//    // 2 -> stage 2 evolution/s
-//    // 3 -> stage 3 evolution/s
-//
-//    // 1) e.g. bulbasaur, charmander, squirtle
-//    //    1 -> 2 -> 3
-//    //
-//    final bool isCase1EvolutionChain = hasStage3Evolutions &&
-//        hasStage2Evolutions &&
-//        stage2EvolutionCount == 1 &&
-//        stage3EvolutionCount == 1;
-//
-//    // 2) no evolution, e.g. lapras
-//    //    1
-//    final bool isCase2EvolutionChain = !hasStage2Evolutions;
-//
-//    // 3) e.g. rattata
-//    //    1 -> 2
-//    final bool isCase3EvolutionChain = !hasStage3Evolutions &&
-//        hasStage2Evolutions &&
-//        stage2Evolutions.length == 1;
-//
-//    // 4) e.g. eevee
-//    //    2   2   2
-//    //    2   1   2
-//    //    2   2   2
-//    bool isCase4EvolutionChain = !hasStage3Evolutions &&
-//        hasStage2Evolutions &&
-//        stage2Evolutions.length == 8;
-//
-//    // 5) e.g. oddish, poliwag, ralts, cosmog
-//    //          3
-//    //  1 -> 2
-//    //          3
-//    bool isCase5EvolutionChain = hasStage3Evolutions &&
-//        stage3Evolutions.length == 2 &&
-//        hasStage2Evolutions &&
-//        stage2Evolutions.length == 1;
-//
-//    // 6) e.g. slowpoke, nincada, snorunt, clamperl
-//    //     2
-//    //  1
-//    //     2
-//    bool isCase6EvolutionChain = !hasStage3Evolutions &&
-//        hasStage2Evolutions &&
-//        stage2Evolutions.length == 2;
-//
-//    // 7) e.g. tyrogue
-//    //        2
-//    //    1   2
-//    //        2
-//    bool isCase7EvolutionChain = !hasStage3Evolutions &&
-//        hasStage2Evolutions &&
-//        stage2Evolutions.length == 3;
-//
-//    // 8) e.g. wurmple
-//    //        2 -> 3
-//    //    1
-//    //        2 -> 3
-//    bool isCase8EvolutionChain = hasStage3Evolutions &&
-//        stage3Evolutions.length == 2 &&
-//        hasStage2Evolutions &&
-//        stage2Evolutions.length == 2;
-//  }
 }
 
 class EvolutionCard extends StatelessWidget {
@@ -1014,23 +921,23 @@ class EvolutionCard extends StatelessWidget {
 //          borderRadius: BorderRadius.all(Radius.circular(5.0)),
 //        ),
 //        padding: EdgeInsets.symmetric(vertical: 32.0, horizontal: 8.0),
-        padding: EdgeInsets.only(left: 16.0),
+        padding: kEvolutionCardPadding,
         child: Row(
           children: [
             if (isArrowOnLeft != null && isArrowOnLeft)
               Expanded(child: arrowWidget),
             Expanded(
-              flex: 4,
+              flex: kEvolutionColumnDetailsFlex,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   if (isArrowVertical && !isArrowOnBottom)
                     Expanded(child: arrowWidget),
                   Expanded(
-                    flex: 2,
+                    flex: kEvolutionColumnDetailsFlex,
                     child: Container(
-                      width: 50,
-                      height: 50,
+                      width: kEvolutionColumnDetailsWidth,
+                      height: kEvolutionColumnDetailsHeight,
                       decoration: BoxDecoration(
                         image: DecorationImage(
                           image: CachedNetworkImageProvider(species.imageUrl),
@@ -1039,8 +946,23 @@ class EvolutionCard extends StatelessWidget {
                     ),
                   ),
                   Expanded(
-                      child: Text('#${formatPokemonId(species.pokemonId)}')),
-                  Expanded(child: Text(species.pokemonName.inCaps)),
+                    child: Text(
+                      '#${formatPokemonId(species.pokemonId)}',
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyText1
+                          .copyWith(fontSize: 12.0, color: Colors.black),
+                    ),
+                  ),
+                  Expanded(
+                    child: Text(
+                      species.pokemonName.inCaps,
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyText1
+                          .copyWith(fontSize: 12.0, color: Colors.black),
+                    ),
+                  ),
                   if (isArrowVertical && isArrowOnBottom)
                     Expanded(child: arrowWidget),
                 ],
@@ -1055,12 +977,12 @@ class EvolutionCard extends StatelessWidget {
       );
     } else if (arrowWidget != null) {
       return Container(
-        padding: EdgeInsets.symmetric(vertical: 32.0, horizontal: 8.0),
+        padding: kEvolutionArrowPadding,
         child: Center(child: arrowWidget),
       );
     } else {
       return Container(
-        padding: EdgeInsets.symmetric(vertical: 32.0, horizontal: 8.0),
+        padding: kEvolutionCardEmptyPadding,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

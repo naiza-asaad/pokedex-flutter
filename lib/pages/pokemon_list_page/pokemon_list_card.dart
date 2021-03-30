@@ -4,6 +4,7 @@ import 'package:pokedex/models/pokemon.dart';
 import 'package:pokedex/pages/pokemon_page/pokemon_page.dart';
 import 'package:pokedex/pages/pokemon_page/pokemon_page_arguments.dart';
 import 'package:pokedex/utilities/color_utilities.dart';
+import 'package:pokedex/utilities/global_constants.dart';
 import 'package:pokedex/utilities/pokemon_color_picker.dart';
 import 'package:pokedex/utilities/string_extension.dart';
 
@@ -25,13 +26,10 @@ class PokemonListCard extends StatelessWidget {
       ),
       child: Card(
         color: PokemonColorPicker.getColor(_pokemon.typeList[0].type.name),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15.0),
-        ),
         child: Stack(
           children: [
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: kCardPadding,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -41,8 +39,8 @@ class PokemonListCard extends StatelessWidget {
               ),
             ),
             Positioned(
-              bottom: 0,
-              right: 0,
+              bottom: kPokemonImagePositionedBottom,
+              right: kPokemonImagePositionedRight,
               child: PokemonImage(
                 imageUrl: _pokemon.imageUrl,
                 pokemonId: _pokemon.id,
@@ -67,14 +65,10 @@ class PokemonName extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: kPokemonNamePadding,
       child: Text(
         _name,
-        style: TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
-          fontSize: 16.0,
-        ),
+        style: Theme.of(context).textTheme.headline4,
       ),
     );
   }
@@ -130,27 +124,16 @@ class PokemonTypeName extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(
-        vertical: 4.0,
-        horizontal: 12.0,
-      ),
-      margin: EdgeInsets.only(bottom: 4.0),
+      padding: kPokemonTypePadding,
+      margin: kPokemonTypeMargin,
       decoration: BoxDecoration(
         color: lighten(PokemonColorPicker.getColor(_mainTypeName)),
-        border: Border.all(
-          color: Colors.transparent,
-        ),
-        borderRadius: BorderRadius.all(
-          Radius.circular(20),
-        ),
+        border: Border.all(color: kPokemonTypeBorderColor),
+        borderRadius: kPokemonTypeBorderRadius,
       ),
       child: Text(
         _name.inCaps,
-        style: TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
-          fontSize: 14.0,
-        ),
+        style: Theme.of(context).textTheme.headline4,
       ),
     );
   }
@@ -173,8 +156,8 @@ class PokemonImage extends StatelessWidget {
     return Hero(
       tag: 'pokemonImage$_pokemonId',
       child: Container(
-        width: 80,
-        height: 80,
+        width: kPokemonListCardImageWidth,
+        height: kPokemonListCardImageHeight,
         decoration: BoxDecoration(
           image: DecorationImage(
             image: CachedNetworkImageProvider(

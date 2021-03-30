@@ -3,6 +3,7 @@ import 'package:pokedex/models/pokemon.dart';
 import 'package:pokedex/models/simple_pokemon_list.dart';
 import 'package:pokedex/pages/pokemon_list_page/pokemon_list_card.dart';
 import 'package:pokedex/services/pokedex_api_service.dart';
+import 'package:pokedex/utilities/global_constants.dart';
 
 class PokemonListPage extends StatefulWidget {
   static const String route = '/';
@@ -21,12 +22,7 @@ class _PokemonListPageState extends State<PokemonListPage> {
   bool _isLoadingMorePokemon = false;
 
   final _filter = TextEditingController();
-  Widget _appBarTitle = Text(
-    'Pokedex',
-    style: TextStyle(
-      color: Colors.black,
-    ),
-  );
+  Widget _appBarTitle;
   Widget _appBarSearch;
   Widget _appBarWidget;
   Icon _searchIcon = Icon(Icons.search);
@@ -41,7 +37,14 @@ class _PokemonListPageState extends State<PokemonListPage> {
     _fetchInitialPokemonList();
 
     _scrollController.addListener(_handleScroll);
+  }
 
+  @override
+  void didChangeDependencies() {
+    _appBarTitle = Text(
+      'Pokedex',
+      style: Theme.of(context).textTheme.headline2,
+    );
     _appBarWidget = _appBarTitle;
     _appBarSearch = TextField(
       controller: _filter,
@@ -53,6 +56,8 @@ class _PokemonListPageState extends State<PokemonListPage> {
     );
 
     _appBarActionIcon = _searchIcon;
+
+    super.didChangeDependencies();
   }
 
   @override
@@ -76,13 +81,9 @@ class _PokemonListPageState extends State<PokemonListPage> {
             onPressed: _onPressRefreshIcon,
           )
         ],
-        elevation: 0,
       ),
       body: Padding(
-        padding: const EdgeInsets.only(
-          left: 12.0,
-          right: 12.0,
-        ),
+        padding: kPokemonListPageScaffoldBodyPadding,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -96,10 +97,7 @@ class _PokemonListPageState extends State<PokemonListPage> {
                     controller: _scrollController,
                     slivers: [
                       SliverGrid(
-                        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                          maxCrossAxisExtent: 250,
-                          childAspectRatio: 3 / 2,
-                        ),
+                        gridDelegate: kPokemonGridDelegate,
                         delegate: SliverChildBuilderDelegate(
                           (context, index) {
                             if (!_hasSearched) {
@@ -234,7 +232,7 @@ class _PokemonListPageState extends State<PokemonListPage> {
     if (!_isLoadingMorePokemon) {
       return SliverToBoxAdapter(
         child: SizedBox(
-          height: 100.0,
+          height: kPokemonListPageFooterHeight,
         ),
       );
     }
@@ -242,14 +240,12 @@ class _PokemonListPageState extends State<PokemonListPage> {
     return SliverToBoxAdapter(
       child: Center(
         child: Padding(
-          padding: const EdgeInsets.all(12.0),
+          padding: kProgressIndicatorFooterPadding,
           child: SizedBox(
             child: Container(
-              child: CircularProgressIndicator(
-                strokeWidth: 2.0,
-              ),
-              width: 35.0,
-              height: 35.0,
+              child: CircularProgressIndicator(strokeWidth: kProgressIndicatorStrokeWidth),
+              width: kProgressIndicatorFooterWidth,
+              height: kProgressIndicatorFooterHeight,
             ),
           ),
         ),
