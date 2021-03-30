@@ -43,6 +43,7 @@ const kPokemonPageHeaderPadding = const EdgeInsets.only(
   bottom: 8.0,
   left: 16.0,
 );
+const kPokemonPageHeaderIdPadding = const EdgeInsets.only(right: 16.0);
 //const kPokemonPageHeaderImageWidth = 100.0;
 //const kPokemonPageHeaderImageHeight = 100.0;
 const kPokemonPageHeaderImageWidth = 200.0;

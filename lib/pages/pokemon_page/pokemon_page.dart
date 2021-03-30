@@ -135,7 +135,17 @@ class PokemonPageHeader extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   PokemonName(name: pokemon.name),
-                  PokemonId(id: pokemon.id),
+                  if (MediaQuery.of(context).orientation ==
+                      Orientation.portrait)
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Padding(
+                        padding: kPokemonPageHeaderIdPadding,
+                        child: PokemonId(id: pokemon.id),
+                      ),
+                    )
+                  else
+                    PokemonId(id: pokemon.id),
                   PokemonTypeList(typeList: pokemon.typeList),
                 ],
               ),
