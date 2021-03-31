@@ -5,7 +5,7 @@ import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/material.dart';
 import 'package:pokedex/models/pokemon.dart';
 import 'package:pokedex/models/pokemon_evolution_chain.dart';
-import 'package:pokedex/services/pokedex_api_service.dart';
+import 'package:pokedex/services/pokemon_service.dart';
 import 'package:pokedex/utilities/color_utilities.dart';
 import 'package:pokedex/utilities/global_constants.dart';
 import 'package:pokedex/utilities/pokemon_color_picker.dart';
@@ -57,7 +57,8 @@ class _CustomScaffoldState extends State<CustomScaffold> {
   void initState() {
     super.initState();
 
-    futurePokemon = fetchPokemonDetailsService(name: widget.pokemon.name);
+    futurePokemon =
+        PokemonService().fetchPokemonDetails(name: widget.pokemon.name);
   }
 
   @override

@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:pokedex/models/pokemon.dart';
 import 'package:pokedex/models/simple_pokemon_list.dart';
 import 'package:pokedex/pages/pokemon_list_page/pokemon_list_card.dart';
-import 'package:pokedex/services/pokedex_api_service.dart';
+import 'package:pokedex/services/pokemon_list_service.dart';
+import 'package:pokedex/services/pokemon_service.dart';
 import 'package:pokedex/utilities/global_constants.dart';
 
 class PokemonListPage extends StatefulWidget {
@@ -15,7 +16,6 @@ class PokemonListPage extends StatefulWidget {
 class _PokemonListPageState extends State<PokemonListPage> {
   SimplePokemonList _simplePokemonList;
 
-//  int _pokemonListLength = 0;
   List<Pokemon> _searchResultList = [];
   bool _isLoading = true;
   bool _hasSearched = false;
@@ -116,7 +116,6 @@ class _PokemonListPageState extends State<PokemonListPage> {
                               }
                             }
                           },
-//                          childCount: _simplePokemonList.pokemonList.length,
                           childCount: !_hasSearched
                               ? _simplePokemonList.pokemonList.length
                               : ((_searchResultList == null ||
@@ -155,13 +154,10 @@ class _PokemonListPageState extends State<PokemonListPage> {
   void _fetchInitialPokemonList() async {
     // simplePokemonList only contains the name and detailsUrl of each Pokemon.
     // We fetch the details (types, image, etc.) after fetching simplePokemonList.
-    _simplePokemonList = await fetchPokemonListService();
-//    _simplePokemonList =
-//        await fetchPokemonDetailsListService(simplePokemonList);
+    _simplePokemonList = await PokemonListService().fetchPokemonList();
 
     setState(() {
       _isLoading = false;
-//      _pokemonListLength = _simplePokemonList.pokemonList.length + 1;
     });
   }
 
@@ -180,7 +176,7 @@ class _PokemonListPageState extends State<PokemonListPage> {
   }
 
   Future<List<Pokemon>> _fetchSearchPokemonList(String searchText) async {
-    return await fetchSearchPokemonListService(searchText);
+    return await PokemonService().fetchSearchPokemonList(searchText);
   }
 
   void _handleScroll() {
@@ -204,7 +200,7 @@ class _PokemonListPageState extends State<PokemonListPage> {
     final nextPageUrl = _simplePokemonList.next;
     print('next page url=$nextPageUrl');
 
-    final simplePokemonList = await loadMorePokemonService(
+    final simplePokemonList = await PokemonListService().loadMorePokemon(
       nextPageUrl: nextPageUrl,
       oldSimplePokemonList: _simplePokemonList,
     );
@@ -212,7 +208,6 @@ class _PokemonListPageState extends State<PokemonListPage> {
     setState(() {
       _isLoading = false;
       _isLoadingMorePokemon = false;
-//      _pokemonListLength = _simplePokemonList.pokemonList.length + 1;
     });
   }
 
@@ -243,7 +238,8 @@ class _PokemonListPageState extends State<PokemonListPage> {
           padding: kProgressIndicatorFooterPadding,
           child: SizedBox(
             child: Container(
-              child: CircularProgressIndicator(strokeWidth: kProgressIndicatorStrokeWidth),
+              child: CircularProgressIndicator(
+                  strokeWidth: kProgressIndicatorStrokeWidth),
               width: kProgressIndicatorFooterWidth,
               height: kProgressIndicatorFooterHeight,
             ),

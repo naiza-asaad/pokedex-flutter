@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:pokedex/pages/pokemon_page/pokemon_page.dart';
 
 //
 // PokemonListPage UI constants
