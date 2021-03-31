@@ -5,6 +5,7 @@ import 'package:pokedex/pages/pokemon_list_page/pokemon_list_card.dart';
 import 'package:pokedex/services/pokemon_list_service.dart';
 import 'package:pokedex/services/pokemon_service.dart';
 import 'package:pokedex/utilities/global_constants.dart';
+import 'package:pokedex/widgets/search_widget.dart';
 
 class PokemonListPage extends StatefulWidget {
   static const String route = '/';
@@ -16,53 +17,30 @@ class PokemonListPage extends StatefulWidget {
 class _PokemonListPageState extends State<PokemonListPage> {
   SimplePokemonList _simplePokemonList;
 
-  List<Pokemon> _searchResultList = [];
-  bool _isLoading = true;
-  bool _hasSearched = false;
-  bool _isLoadingMorePokemon = false;
+  bool isLoading = true;
+  bool isLoadingMorePokemon = false;
 
-  final _filter = TextEditingController();
-  Widget _appBarTitle;
-  Widget _appBarSearch;
-  Widget _appBarWidget;
-  Icon _searchIcon = Icon(Icons.search);
-  Icon _closeIcon = Icon(Icons.close);
-  Icon _appBarActionIcon;
+  bool isSearching = false;
+  bool hasSearched = false;
+  final searchFilter = TextEditingController();
+  List<Pokemon> searchResultList = [];
+  final Icon searchIcon = const Icon(Icons.search);
+  final Icon closeIcon = const Icon(Icons.close);
 
-  var _scrollController = ScrollController();
+  final scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
+
+    scrollController.addListener(_handleScroll);
+
     _fetchInitialPokemonList();
-
-    _scrollController.addListener(_handleScroll);
-  }
-
-  @override
-  void didChangeDependencies() {
-    _appBarTitle = Text(
-      'Pokedex',
-      style: Theme.of(context).textTheme.headline2,
-    );
-    _appBarWidget = _appBarTitle;
-    _appBarSearch = TextField(
-      controller: _filter,
-      decoration: InputDecoration(
-        prefixIcon: Icon(Icons.search),
-        hintText: 'Search Pokemon',
-      ),
-      onSubmitted: _performSearch,
-    );
-
-    _appBarActionIcon = _searchIcon;
-
-    super.didChangeDependencies();
   }
 
   @override
   void dispose() {
-    _scrollController.dispose();
+    scrollController.dispose();
     super.dispose();
   }
 
@@ -70,10 +48,19 @@ class _PokemonListPageState extends State<PokemonListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: _appBarWidget,
+        title: isSearching
+            ? SearchWidget(
+                searchBoxHint: 'Search Pokemon',
+                searchCallback: _performSearch,
+                searchFilter: searchFilter,
+              )
+            : Text(
+                'Pokedex',
+                style: Theme.of(context).textTheme.headline2,
+              ),
         actions: [
           IconButton(
-            icon: _appBarActionIcon,
+            icon: isSearching ? Icon(Icons.close) : Icon(Icons.search),
             onPressed: _onPressSearchIcon,
           ),
           IconButton(
@@ -87,42 +74,42 @@ class _PokemonListPageState extends State<PokemonListPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (_isLoading)
+            if (isLoading)
               Expanded(child: Center(child: CircularProgressIndicator()))
             else
               Expanded(
                 child: RefreshIndicator(
                   onRefresh: _handleRefresh,
                   child: CustomScrollView(
-                    controller: _scrollController,
+                    controller: scrollController,
                     slivers: [
                       SliverGrid(
                         gridDelegate: kPokemonGridDelegate,
                         delegate: SliverChildBuilderDelegate(
                           (context, index) {
-                            if (!_hasSearched) {
+                            if (!hasSearched) {
                               Pokemon pokemon =
                                   _simplePokemonList.pokemonList[index];
                               return PokemonListCard(pokemon);
                             } else {
-                              if ((_searchResultList == null ||
-                                  _searchResultList.length <= 0)) {
+                              if ((searchResultList == null ||
+                                  searchResultList.length <= 0)) {
                                 print('no results found');
                                 return Center(child: Text('No Pokemon found'));
                               } else {
                                 print('found a pokemon');
-                                Pokemon pokemon = _searchResultList[index];
+                                Pokemon pokemon = searchResultList[index];
                                 return PokemonListCard(pokemon);
                               }
                             }
                           },
-                          childCount: !_hasSearched
+                          childCount: !hasSearched
                               ? _simplePokemonList.pokemonList.length
-                              : ((_searchResultList == null ||
-                                          _searchResultList.length <= 0) &&
-                                      _hasSearched)
+                              : ((searchResultList == null ||
+                                          searchResultList.length <= 0) &&
+                                      hasSearched)
                                   ? 1 // If 0, itemBuilder never gets called.
-                                  : _searchResultList.length,
+                                  : searchResultList.length,
                         ),
                       ),
                       _buildProgressIndicatorFooter(),
@@ -138,17 +125,17 @@ class _PokemonListPageState extends State<PokemonListPage> {
 
   void _onPressSearchIcon() {
     setState(() {
-      if (this._appBarActionIcon.icon == Icons.search) {
-        this._appBarActionIcon = _closeIcon;
-        this._appBarWidget = _appBarSearch;
-      } else {
-        this._appBarActionIcon = _searchIcon;
-        this._appBarWidget = _appBarTitle;
-        _filter.clear();
-        _hasSearched = false;
-        _searchResultList.clear();
+      if (!isSearching) {
+        isSearching = true;
+      }
+      else {
+        isSearching = false;
+        hasSearched = false;
+        searchFilter.clear();
+        searchResultList.clear();
       }
     });
+
   }
 
   void _fetchInitialPokemonList() async {
@@ -157,21 +144,21 @@ class _PokemonListPageState extends State<PokemonListPage> {
     _simplePokemonList = await PokemonListService().fetchPokemonList();
 
     setState(() {
-      _isLoading = false;
+      isLoading = false;
     });
   }
 
   void _performSearch(String searchText) async {
     print('searchText=$searchText');
     setState(() {
-      _isLoading = true;
+      isLoading = true;
     });
 
     final tempPokemonList = await _fetchSearchPokemonList(searchText);
     setState(() {
-      _hasSearched = true;
-      _searchResultList = tempPokemonList;
-      _isLoading = false;
+      hasSearched = true;
+      searchResultList = tempPokemonList;
+      isLoading = false;
     });
   }
 
@@ -180,15 +167,15 @@ class _PokemonListPageState extends State<PokemonListPage> {
   }
 
   void _handleScroll() {
-    if (!_isLoading &&
-        !_isLoadingMorePokemon &&
-        _scrollController.position.pixels ==
-            _scrollController.position.maxScrollExtent) {
+    if (!isLoading &&
+        !isLoadingMorePokemon &&
+        scrollController.position.pixels ==
+            scrollController.position.maxScrollExtent) {
       // At the bottom of the list
       print('tried to scroll down at the bottom');
 
       setState(() {
-        _isLoadingMorePokemon = true;
+        isLoadingMorePokemon = true;
       });
 
       _loadMorePokemon();
@@ -206,8 +193,8 @@ class _PokemonListPageState extends State<PokemonListPage> {
     );
 
     setState(() {
-      _isLoading = false;
-      _isLoadingMorePokemon = false;
+      isLoading = false;
+      isLoadingMorePokemon = false;
     });
   }
 
@@ -215,7 +202,7 @@ class _PokemonListPageState extends State<PokemonListPage> {
 
   Future<void> _handleRefresh() async {
     setState(() {
-      _isLoading = true;
+      isLoading = true;
     });
 
     _fetchInitialPokemonList();
@@ -224,7 +211,7 @@ class _PokemonListPageState extends State<PokemonListPage> {
   _buildProgressIndicatorFooter() {
     print('build footer');
 
-    if (!_isLoadingMorePokemon) {
+    if (!isLoadingMorePokemon) {
       return SliverToBoxAdapter(
         child: SizedBox(
           height: kPokemonListPageFooterHeight,
