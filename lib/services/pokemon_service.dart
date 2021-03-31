@@ -4,7 +4,7 @@ import 'package:pokedex/utilities/string_extension.dart';
 import 'api/pokemon_api.dart';
 
 class PokemonService {
-  Future<List<Pokemon>> fetchSearchPokemonList(
+  static Future<List<Pokemon>> fetchSearchPokemonList(
       String searchedPokemonName) async {
     searchedPokemonName = searchedPokemonName.toLowerCase();
     final searchPokemonList =
@@ -12,7 +12,7 @@ class PokemonService {
     return searchPokemonList;
   }
 
-  Future<Pokemon> fetchPokemonDetails({String name, int id}) async {
+  static Future<Pokemon> fetchPokemonDetails({String name, int id}) async {
     final formattedName = name.inSmallCaps;
     return await PokemonApi.fetchPokemonDetails(name: formattedName, id: id);
   }

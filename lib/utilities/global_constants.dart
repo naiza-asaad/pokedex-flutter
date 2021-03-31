@@ -43,8 +43,6 @@ const kPokemonPageHeaderPadding = const EdgeInsets.only(
   left: 16.0,
 );
 const kPokemonPageHeaderIdPadding = const EdgeInsets.only(right: 16.0);
-//const kPokemonPageHeaderImageWidth = 100.0;
-//const kPokemonPageHeaderImageHeight = 100.0;
 const kPokemonPageHeaderImageWidth = 200.0;
 const kPokemonPageHeaderImageHeight = 200.0;
 const kPokemonPageHeaderRow1Flex = 2;
@@ -62,10 +60,12 @@ const kPokemonPageDetailsBorderRadius = BorderRadius.only(
 );
 const kPokemonPageDetailsTabCount = 4;
 const kPokemonPageDetailsDefaultTabIndex = 0;
+
 // MovesContainer
 const kMovesContainerWrapSpacing = 3.0;
 const kMovesContainerWrapRunSpacing = 3.0;
 const kMoveItemPadding = EdgeInsets.all(8.0);
+
 // AboutContainer
 const kAboutContainerPadding = const EdgeInsets.all(16.0);
 const kFlavorTextPadding = const EdgeInsets.only(
@@ -74,9 +74,11 @@ const kFlavorTextPadding = const EdgeInsets.only(
 );
 const kAboutGridTextPadding = const EdgeInsets.all(4.0);
 BorderSide aboutTableBorderInside(Color color) => BorderSide(color: color);
+
 // EvolutionChainContainer
 const kEvolutionChainContainerPadding = const EdgeInsets.only(top: 32.0);
 const kEvolutionChainGridDimension = 3; // 3x3 grid
+
 // EvolutionCard
 const kEvolutionCardPadding = EdgeInsets.only(left: 16.0);
 const kEvolutionRowDetailsFlex = 4;

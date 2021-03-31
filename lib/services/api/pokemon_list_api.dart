@@ -6,13 +6,12 @@ import 'api_config.dart';
 
 class PokemonListApi {
   /// Fetches Pokemon list that only contains the Pokemon's name and details URL.
-  static Future<SimplePokemonList> fetchPokemonList({String nextPageUrl}) async {
-    print('fetchPokemonList()');
+  static Future<SimplePokemonList> fetchPokemonList(
+      {String nextPageUrl}) async {
     try {
       bool hasPaginatedUrl = nextPageUrl != null && nextPageUrl.isNotEmpty;
 
       final fetchUrl = !hasPaginatedUrl ? initialFetchUrl : nextPageUrl;
-      print('fetchUrl=$fetchUrl');
       final response = await dio.get(fetchUrl);
       final pokemonList = SimplePokemonList.fromJson(response.data);
       return pokemonList;
@@ -24,7 +23,6 @@ class PokemonListApi {
   /// Fetches more details needed to display the main home page list (ID, image, and types).
   static Future<List<Pokemon>> fetchPokemonDetailsList(
       SimplePokemonList simplePokemonList) async {
-    print('fetchPokemonDetailsList()');
     try {
       final List<Response> responses =
           await _fetchPokemonDetailsResponses(simplePokemonList);
@@ -44,8 +42,6 @@ class PokemonListApi {
 
   static Future<List<Response>> _fetchPokemonDetailsResponses(
       SimplePokemonList simplePokemonList) async {
-    print('_fetchPokemonDetailsResponses()');
-
     List<Future<Response>> responses = [];
     for (var i = 0; i < simplePokemonList.simplePokemonList.length; ++i) {
       final fetchUrl = simplePokemonList.simplePokemonList[i].detailsUrl;

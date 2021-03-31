@@ -9,9 +9,9 @@ import 'package:pokedex/utilities/pokemon_color_picker.dart';
 import 'package:pokedex/utilities/string_extension.dart';
 
 class PokemonListCard extends StatelessWidget {
-  final Pokemon _pokemon;
+  final Pokemon pokemon;
 
-  PokemonListCard(this._pokemon);
+  PokemonListCard(this.pokemon);
 
   @override
   Widget build(BuildContext context) {
@@ -20,12 +20,12 @@ class PokemonListCard extends StatelessWidget {
         context,
         PokemonPage.route,
         arguments: PokemonPageArguments(
-          _pokemon,
-          PokemonColorPicker.getColor(_pokemon.typeList[0].type.name),
+          pokemon,
+          PokemonColorPicker.getColor(pokemon.typeList[0].type.name),
         ),
       ),
       child: Card(
-        color: PokemonColorPicker.getColor(_pokemon.typeList[0].type.name),
+        color: PokemonColorPicker.getColor(pokemon.typeList[0].type.name),
         child: Stack(
           children: [
             Padding(
@@ -33,8 +33,8 @@ class PokemonListCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  PokemonName(name: _pokemon.name),
-                  PokemonTypeList(typeList: _pokemon.typeList),
+                  PokemonName(name: pokemon.name),
+                  PokemonTypeList(typeList: pokemon.typeList),
                 ],
               ),
             ),
@@ -42,8 +42,8 @@ class PokemonListCard extends StatelessWidget {
               bottom: kPokemonImagePositionedBottom,
               right: kPokemonImagePositionedRight,
               child: PokemonImage(
-                imageUrl: _pokemon.imageUrl,
-                pokemonId: _pokemon.id,
+                imageUrl: pokemon.imageUrl,
+                pokemonId: pokemon.id,
               ),
             ),
           ],
@@ -57,17 +57,17 @@ class PokemonName extends StatelessWidget {
   const PokemonName({
     Key key,
     @required String name,
-  })  : _name = name,
+  })  : name = name,
         super(key: key);
 
-  final String _name;
+  final String name;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: kPokemonNamePadding,
       child: Text(
-        _name,
+        name,
         style: Theme.of(context).textTheme.headline4,
       ),
     );
@@ -78,32 +78,32 @@ class PokemonTypeList extends StatelessWidget {
   const PokemonTypeList({
     Key key,
     @required List<PokemonType> typeList,
-  })  : _typeList = typeList,
+  })  : typeList = typeList,
         super(key: key);
 
-  final List<PokemonType> _typeList;
+  final List<PokemonType> typeList;
 
   @override
   Widget build(BuildContext context) {
-    if (_typeList.length > 1) {
+    if (typeList.length > 1) {
       // Pokemon has 2 types
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           PokemonTypeName(
-            name: _typeList[0].type.name,
-            mainTypeName: _typeList[0].type.name,
+            name: typeList[0].type.name,
+            mainTypeName: typeList[0].type.name,
           ),
           PokemonTypeName(
-            name: _typeList[1].type.name,
-            mainTypeName: _typeList[0].type.name,
+            name: typeList[1].type.name,
+            mainTypeName: typeList[0].type.name,
           ),
         ],
       );
     } else {
       return PokemonTypeName(
-        name: _typeList[0].type.name,
-        mainTypeName: _typeList[0].type.name,
+        name: typeList[0].type.name,
+        mainTypeName: typeList[0].type.name,
       );
     }
   }
@@ -114,12 +114,12 @@ class PokemonTypeName extends StatelessWidget {
     Key key,
     @required String name,
     @required String mainTypeName,
-  })  : _name = name,
-        _mainTypeName = mainTypeName,
+  })  : name = name,
+        mainTypeName = mainTypeName,
         super(key: key);
 
-  final String _name;
-  final String _mainTypeName;
+  final String name;
+  final String mainTypeName;
 
   @override
   Widget build(BuildContext context) {
@@ -127,12 +127,12 @@ class PokemonTypeName extends StatelessWidget {
       padding: kPokemonTypePadding,
       margin: kPokemonTypeMargin,
       decoration: BoxDecoration(
-        color: lighten(PokemonColorPicker.getColor(_mainTypeName)),
+        color: lighten(PokemonColorPicker.getColor(mainTypeName)),
         border: Border.all(color: kPokemonTypeBorderColor),
         borderRadius: kPokemonTypeBorderRadius,
       ),
       child: Text(
-        _name.inCaps,
+        name.inCaps,
         style: Theme.of(context).textTheme.headline4,
       ),
     );
@@ -144,43 +144,26 @@ class PokemonImage extends StatelessWidget {
     Key key,
     @required String imageUrl,
     @required int pokemonId,
-  })  : _imageUrl = imageUrl,
-        _pokemonId = pokemonId,
+  })  : imageUrl = imageUrl,
+        pokemonId = pokemonId,
         super(key: key);
 
-  final String _imageUrl;
-  final int _pokemonId;
+  final String imageUrl;
+  final int pokemonId;
 
   @override
   Widget build(BuildContext context) {
     return Hero(
-      tag: 'pokemonImage$_pokemonId',
+      tag: 'pokemonImage$pokemonId',
       child: Container(
         width: kPokemonListCardImageWidth,
         height: kPokemonListCardImageHeight,
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: CachedNetworkImageProvider(
-              _imageUrl
-            ),
+            image: CachedNetworkImageProvider(imageUrl),
           ),
         ),
-//      child: Hero(
-//        tag: 'pokemonImageHero$_pokemonId',
-//      child: CachedNetworkImage(
-//        imageUrl: _imageUrl,
-//        progressIndicatorBuilder: (context, url, downloadProgress) => Padding(
-//          padding: const EdgeInsets.only(
-//            bottom: 16.0,
-//            right: 16.0,
-//          ),
-//          child: CircularProgressIndicator(value: downloadProgress.progress),
-//        ),
-//        errorWidget: (context, url, error) => Icon(Icons.error),
-//      ),
-//      ),
       ),
     );
-//    return Image.network(_imageUrl);
   }
 }

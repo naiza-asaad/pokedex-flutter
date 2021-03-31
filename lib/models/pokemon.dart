@@ -42,14 +42,14 @@ class Pokemon {
         tempAbilityList.map((e) => PokemonAbility.fromJson(e)).toList();
 
     var tempMoveList = parsedJson['moves'] as List;
-    List<PokemonMove> moveList = tempMoveList.map((e) => PokemonMove.fromJson(e)).toList();
+    List<PokemonMove> moveList =
+        tempMoveList.map((e) => PokemonMove.fromJson(e)).toList();
 
     return Pokemon(
       id: parsedJson['id'],
       name: (parsedJson['name'] as String).inCaps,
       imageUrl: parsedJson['sprites']['other']['official-artwork']
           ['front_default'],
-//      imageUrl: parsedJson['sprites']['front_default'],
       typeList: typeList,
       abilityList: abilityList,
       heightInDecimeters: parsedJson['height'],

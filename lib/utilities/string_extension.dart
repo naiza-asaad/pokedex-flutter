@@ -5,12 +5,12 @@ extension CapExtension on String {
 
   String get allInCaps => this.toUpperCase();
 
-  String get capitalizeFirstofEach =>
+  String get capitalizeFirstOfEach =>
       this.split(" ").map((str) => str.inCaps).join(" ");
 }
 
 /// Display Pokemon ID with left-padded zeroes.
-/// e.g. 0001, 0015, 0324
+/// e.g. 001, 015, 324
 /// As of this writing, there are 898 Pokemon, so idWidth = 3.
 String formatPokemonId(int id) {
   int idWidth = 3;

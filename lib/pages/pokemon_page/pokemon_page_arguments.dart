@@ -5,5 +5,8 @@ class PokemonPageArguments {
   final Pokemon pokemon;
   final Color mainTypeColor;
 
-  PokemonPageArguments(this.pokemon, this.mainTypeColor);
+  PokemonPageArguments(
+    this.pokemon,
+    this.mainTypeColor,
+  );
 }

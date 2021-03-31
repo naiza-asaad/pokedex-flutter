@@ -8,7 +8,6 @@ import 'api_config.dart';
 class PokemonEvolutionApi {
   static Future<PokemonEvolutionChain> fetchPokemonEvolutionChain(
       String speciesUrl) async {
-    print('fetchEvolutionChain()');
     try {
       final speciesResponse = await dio.get(speciesUrl);
       PokemonSpecies pokemonSpecies =
@@ -24,8 +23,8 @@ class PokemonEvolutionApi {
     }
   }
 
-  static Future fetchIdAndImagesForEvolutionChain(PokemonEvolutionChain chain) async {
-    print('fetching ids and images');
+  static Future fetchIdAndImagesForEvolutionChain(
+      PokemonEvolutionChain chain) async {
     List<EvolvesTo> stage2Evolutions = chain.chain.evolutions;
     bool hasStage2Evolutions =
         stage2Evolutions != null && stage2Evolutions.isNotEmpty;
@@ -47,13 +46,11 @@ class PokemonEvolutionApi {
     // 1st pokemon
     var fetchPokemonUrl = '$baseUrl/pokemon/${chain.chain.pokemonName}';
     futureResponses.add(dio.get(fetchPokemonUrl));
-    print('to fetch=$fetchPokemonUrl');
 
     // stage 2 evolutions
     if (hasStage2Evolutions) {
       for (var stage2Evolution in stage2Evolutions) {
         fetchPokemonUrl = '$baseUrl/pokemon/${stage2Evolution.pokemonName}';
-        print('to fetch=$fetchPokemonUrl');
         futureResponses.add(dio.get(fetchPokemonUrl));
       }
     }
@@ -62,7 +59,6 @@ class PokemonEvolutionApi {
     if (hasStage3Evolutions) {
       for (var stage3Evolution in stage3Evolutions) {
         fetchPokemonUrl = '$baseUrl/pokemon/${stage3Evolution.pokemonName}';
-        print('to fetch=$fetchPokemonUrl');
         futureResponses.add(dio.get(fetchPokemonUrl));
       }
     }
@@ -73,7 +69,6 @@ class PokemonEvolutionApi {
     final pokemon = Pokemon.fromJson(responses[0].data);
     chain.chain.imageUrl = pokemon.imageUrl;
     chain.chain.pokemonId = pokemon.id;
-    print('got base pokemon');
 
     // stage 2 evolutions
     for (var i = 0; i < stage2Evolutions.length; ++i) {
@@ -81,7 +76,6 @@ class PokemonEvolutionApi {
       final pokemon = Pokemon.fromJson(responses[index].data);
       stage2Evolutions[i].imageUrl = pokemon.imageUrl;
       stage2Evolutions[i].pokemonId = pokemon.id;
-      print('got pokemon[$index]');
     }
 
     for (var i = 0; i < stage3Evolutions.length; ++i) {
@@ -89,9 +83,6 @@ class PokemonEvolutionApi {
       final pokemon = Pokemon.fromJson(responses[index].data);
       stage3Evolutions[i].imageUrl = pokemon.imageUrl;
       stage3Evolutions[i].pokemonId = pokemon.id;
-      print('got pokemon[$index]');
     }
-
-    print('fetched images');
   }
 }

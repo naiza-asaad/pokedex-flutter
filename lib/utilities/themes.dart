@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 class PokedexTheme {
@@ -42,7 +41,6 @@ class PokedexTheme {
       ),
       bodyText2: TextStyle(
         fontSize: 18.0,
-//        color: textColorBlueGrey,
         color: textColorWhite,
       ),
     ),

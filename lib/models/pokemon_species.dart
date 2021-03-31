@@ -28,9 +28,8 @@ class PokemonSpecies {
     );
   }
 
-//  @override
-//  String toString() {
-////    return 'evolutionChainUrl=$evolutionChainUrl';
-//    return 'evolutionChainUrl=$evolutionChainUrl, flavorTextEntry1=$flavorTextEntry1';
-//  }
+  @override
+  String toString() {
+    return 'evolutionChainUrl=$evolutionChainUrl, flavorTextEntry1=$flavorTextEntry1';
+  }
 }
