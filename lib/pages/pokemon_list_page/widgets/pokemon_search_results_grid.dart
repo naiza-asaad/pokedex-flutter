@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pokedex/models/pokemon/pokemon.dart';
-import 'package:pokedex/pages/pokemon_list_page/widgets/pokemon_list_card.dart';
+import 'package:pokedex/pages/pokemon_list_page/pokemon_list_card/pokemon_list_card.dart';
 import 'package:pokedex/utilities/global_constants.dart';
 
 class PokemonSearchResultsGrid extends StatelessWidget {
