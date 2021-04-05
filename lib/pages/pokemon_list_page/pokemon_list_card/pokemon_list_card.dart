@@ -4,7 +4,6 @@ import 'package:pokedex/pages/pokemon_list_page/pokemon_list_card/widgets/pokemo
 import 'package:pokedex/pages/pokemon_list_page/pokemon_list_card/widgets/pokemon_name.dart';
 import 'package:pokedex/pages/pokemon_list_page/pokemon_list_card/widgets/pokemon_type_list.dart';
 import 'package:pokedex/pages/pokemon_page/pokemon_page.dart';
-import 'package:pokedex/pages/pokemon_page/pokemon_page_arguments.dart';
 import 'package:pokedex/utilities/global_constants.dart';
 import 'package:pokedex/utilities/pokemon_color_picker.dart';
 

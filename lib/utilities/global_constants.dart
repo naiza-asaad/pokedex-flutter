@@ -62,6 +62,11 @@ const kPokemonPageDetailsTabCount = 4;
 const kPokemonPageDetailsDefaultTabIndex = 0;
 
 // MovesContainer
+const kMovesContainerPadding = const EdgeInsets.only(
+  top: 8.0,
+  left: 4.0,
+  right: 4.0,
+);
 const kMovesContainerWrapSpacing = 3.0;
 const kMovesContainerWrapRunSpacing = 3.0;
 const kMoveItemPadding = EdgeInsets.all(8.0);
