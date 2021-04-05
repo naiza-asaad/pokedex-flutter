@@ -67,6 +67,7 @@ class Pokemon {
   }
 }
 
+// COMMENT RAEL: new file
 class PokemonBaseStats {
   int hp;
   int attack;
@@ -103,6 +104,7 @@ class PokemonBaseStats {
   }
 }
 
+// COMMENT RAEL: new file
 class PokemonBaseStat {
   int baseStat;
   String name;
@@ -128,6 +130,7 @@ class PokemonBaseStat {
   }
 }
 
+// COMMENT RAEL: new file
 class PokemonAbility {
   String name;
   String detailsUrl;
@@ -150,6 +153,7 @@ class PokemonAbility {
   }
 }
 
+// COMMENT RAEL: new file
 class PokemonType {
   int slot;
   Type type;
@@ -172,6 +176,7 @@ class PokemonType {
   }
 }
 
+// COMMENT RAEL: new file
 class Type {
   String name;
   String url;
@@ -194,6 +199,7 @@ class Type {
   }
 }
 
+// COMMENT RAEL: new file
 class PokemonMove {
   String name;
   String url;

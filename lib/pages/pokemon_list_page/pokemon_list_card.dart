@@ -53,6 +53,7 @@ class PokemonListCard extends StatelessWidget {
   }
 }
 
+// COMMENT RAEL: these widgets should either be private or in a new file
 class PokemonName extends StatelessWidget {
   const PokemonName({
     Key key,

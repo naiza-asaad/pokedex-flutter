@@ -18,8 +18,7 @@ class SimplePokemonList {
 
   factory SimplePokemonList.fromJson(Map<String, dynamic> parsedJson) {
     var list = parsedJson['results'] as List;
-    List<SimplePokemon> simplePokemonList =
-        list.map((e) => SimplePokemon.fromJson(e)).toList();
+    List<SimplePokemon> simplePokemonList = list.map((e) => SimplePokemon.fromJson(e)).toList();
 
     return SimplePokemonList(
       count: parsedJson['count'],
@@ -35,6 +34,7 @@ class SimplePokemonList {
   }
 }
 
+// COMMENT RAEL: new file
 class SimplePokemon {
   String name;
   String detailsUrl;
