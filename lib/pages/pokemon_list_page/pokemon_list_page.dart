@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:pokedex/models/pokemon/pokemon.dart';
 import 'package:pokedex/models/simple_pokemon/simple_pokemon_list.dart';
-import 'package:pokedex/pages/pokemon_list_page/pokemon_list_card.dart';
+import 'package:pokedex/pages/pokemon_list_page/widgets/pokemon_list_card.dart';
+import 'package:pokedex/pages/pokemon_list_page/widgets/pokemon_scroll_grid.dart';
+import 'package:pokedex/pages/pokemon_list_page/widgets/pokemon_search_results_grid.dart';
 import 'package:pokedex/services/pokemon_list_service.dart';
 import 'package:pokedex/services/pokemon_service.dart';
 import 'package:pokedex/utilities/global_constants.dart';
-import 'package:pokedex/widgets/empty_footer.dart';
-import 'package:pokedex/widgets/progress_indicator_footer.dart';
+import 'package:pokedex/widgets/empty_page_with_message.dart';
+import 'package:pokedex/widgets/loading_page_indicator.dart';
 import 'package:pokedex/widgets/search_widget.dart';
+import 'package:pokedex/widgets/toggle_icon_button.dart';
 
-// TODO: Feedback
-// Try to create components/custom widgets.
-// Break widgets down as many as possible and should be reasonable
-// COMMENT RAEL: this file isn't in format.
 class PokemonListPage extends StatefulWidget {
   static const String route = '/';
 
@@ -22,34 +21,25 @@ class PokemonListPage extends StatefulWidget {
 
 class _PokemonListPageState extends State<PokemonListPage> {
   SimplePokemonList simplePokemonList;
-
-  // COMMENT RAEL: doesn't need a value here. initialize the default value on initState() method.
-  // bool isLoading;
-  // bool isLoadingMorePokemon;
-  // bool isSearching;
-  // bool hasSearched;
-  // TextEditingController searchFilter;
-  // ScrollController scrollController;
-  bool isLoading = true;
-  bool isLoadingMorePokemon = false;
-
-  bool isSearching = false;
-  bool hasSearched = false;
-  final searchFilter = TextEditingController();
-  List<Pokemon> searchResultList = [];
-
-  // COMMENT RAEL: not needed just call these values on where this variables are being called
-  final Icon searchIcon = const Icon(Icons.search);
-  final Icon closeIcon = const Icon(Icons.close);
-
-  final scrollController = ScrollController();
+  bool isLoading;
+  bool isLoadingMorePokemon;
+  bool isSearching;
+  bool hasSearched;
+  TextEditingController searchFilter;
+  List<Pokemon> searchResultList;
+  ScrollController scrollController;
 
   @override
   void initState() {
     super.initState();
-
+    isLoading = true;
+    isLoadingMorePokemon = false;
+    isSearching = false;
+    hasSearched = false;
+    searchFilter = TextEditingController();
+    searchResultList = [];
+    scrollController = ScrollController();
     scrollController.addListener(handleScroll);
-
     fetchInitialPokemonList();
   }
 
@@ -74,12 +64,14 @@ class _PokemonListPageState extends State<PokemonListPage> {
                 style: Theme.of(context).textTheme.headline2,
               ),
         actions: [
-          IconButton(
-            icon: isSearching ? Icon(Icons.close) : Icon(Icons.search),
-            onPressed: onPressSearchIcon,
+          ToggleIconButton(
+            iconIfCondition: Icon(Icons.search),
+            otherIcon: Icon(Icons.close),
+            condition: !isSearching,
+            onPress: onPressSearchIcon,
           ),
           IconButton(
-            icon: Icon(Icons.refresh),
+            icon: const Icon(Icons.refresh),
             onPressed: onPressRefreshIcon,
           )
         ],
@@ -90,52 +82,32 @@ class _PokemonListPageState extends State<PokemonListPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (isLoading)
-              Expanded(child: Center(child: CircularProgressIndicator()))
+              Expanded(child: LoadingPage())
             else
               Expanded(
-                child: RefreshIndicator(
-                  onRefresh: handleRefresh,
-                  child: CustomScrollView(
-                    controller: scrollController,
-                    slivers: [
-                      SliverGrid(
-                        gridDelegate: kPokemonGridDelegate,
-                        delegate: SliverChildBuilderDelegate(
-                          (context, index) {
-                            if (!hasSearched) {
-                              Pokemon pokemon =
-                                  simplePokemonList.pokemonList[index];
-                              return PokemonListCard(pokemon);
-                            } else {
-                              if ((searchResultList == null ||
-                                  searchResultList.length <= 0)) {
-                                return Center(child: Text('No Pokemon found'));
-                              } else {
-                                Pokemon pokemon = searchResultList[index];
-                                return PokemonListCard(pokemon);
-                              }
-                            }
-                          },
-                          childCount: !hasSearched
-                              ? simplePokemonList.pokemonList.length
-                              : ((searchResultList == null ||
-                                          searchResultList.length <= 0) &&
-                                      hasSearched)
-                                  ? 1 // If 0, itemBuilder never gets called.
-                                  : searchResultList.length,
+                child: !hasSearched
+                    ? RefreshIndicator(
+                        onRefresh: handleRefresh,
+                        child: PokemonScrollGrid(
+                          scrollController: scrollController,
+                          isLoadingMorePokemon: isLoadingMorePokemon,
+                          simplePokemonList: simplePokemonList,
                         ),
-                      ),
-                      !isLoadingMorePokemon
-                          ? SliverToBoxAdapter(child: EmptyFooter())
-                          : SliverToBoxAdapter(child: ProgressIndicatorFooter())
-                    ],
-                  ),
-                ),
+                      )
+                    : hasSearchResults()
+                        ? PokemonSearchResultsGrid(
+                            searchResultList: searchResultList,
+                          )
+                        : EmptyPageWithMessage(message: 'No Pokemon Found'),
               ),
           ],
         ),
       ),
     );
+  }
+
+  bool hasSearchResults() {
+    return searchResultList?.isNotEmpty ?? false;
   }
 
   void onPressSearchIcon() {
@@ -156,20 +128,14 @@ class _PokemonListPageState extends State<PokemonListPage> {
     // We fetch the details (types, image, etc.) after fetching simplePokemonList.
     simplePokemonList = await PokemonListService.fetchPokemonList();
 
-    setState(() {
-      isLoading = false;
-    });
+    setState(() => isLoading = false);
   }
 
   // TODO: Feedback
   // If the user typed more than 1 thousand times, will it perform 1k requests? If so, please
   // use a debounce function where it detects after x milliseconds that the user isn't typing, then do the request
   void performSearch(String searchText) async {
-    // COMMENT RAEL: use lambda
-    // setState(() => isLoading = true);
-    setState(() {
-      isLoading = true;
-    });
+    setState(() => isLoading = true);
 
     final tempPokemonList = await fetchSearchPokemonList(searchText);
     setState(() {
@@ -192,11 +158,7 @@ class _PokemonListPageState extends State<PokemonListPage> {
         scrollController.position.pixels ==
             scrollController.position.maxScrollExtent) {
       // At the bottom of the list
-      // COMMENT RAEL: setState(() => isLoadingMorePokemon = true);
-      setState(() {
-        isLoadingMorePokemon = true;
-      });
-
+      setState(() => isLoadingMorePokemon = true);
       loadMorePokemon();
     }
   }
@@ -219,11 +181,7 @@ class _PokemonListPageState extends State<PokemonListPage> {
   void onPressRefreshIcon() => handleRefresh();
 
   Future<void> handleRefresh() async {
-    // COMMENT RAEL: setState(() => isLoading = true);
-    setState(() {
-      isLoading = true;
-    });
-
+    setState(() => isLoading = true);
     fetchInitialPokemonList();
   }
 }
