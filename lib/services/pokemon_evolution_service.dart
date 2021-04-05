@@ -1,4 +1,4 @@
-import 'package:pokedex/models/pokemon_evolution_chain.dart';
+import 'package:pokedex/models/pokemon_evolution/pokemon_evolution_chain.dart';
 
 import 'api/pokemon_evolution_api.dart';
 

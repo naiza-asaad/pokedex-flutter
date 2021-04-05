@@ -1,5 +1,5 @@
-import 'package:pokedex/models/pokemon.dart';
-import 'package:pokedex/models/simple_pokemon_list.dart';
+import 'package:pokedex/models/pokemon/pokemon.dart';
+import 'package:pokedex/models/simple_pokemon/simple_pokemon_list.dart';
 
 import 'api/pokemon_list_api.dart';
 

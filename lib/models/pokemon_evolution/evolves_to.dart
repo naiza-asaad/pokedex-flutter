@@ -1,23 +1,3 @@
-// TODO: same here
-class PokemonEvolutionChain {
-  EvolvesTo chain;
-
-  PokemonEvolutionChain({
-    this.chain,
-  });
-
-  factory PokemonEvolutionChain.fromJson(Map<String, dynamic> parsedJson) {
-    return PokemonEvolutionChain(
-      chain: EvolvesTo.fromJson(parsedJson['chain']),
-    );
-  }
-
-  @override
-  String toString() {
-    return 'evolution chain = $chain';
-  }
-}
-
 class EvolvesTo {
   String pokemonName;
   List<EvolvesTo> evolutions;
@@ -37,7 +17,8 @@ class EvolvesTo {
         evolutions: [],
       );
     } else {
-      List<EvolvesTo> evolutionsList = tempEvolutionsList.map((e) => EvolvesTo.fromJson(e)).toList();
+      List<EvolvesTo> evolutionsList =
+          tempEvolutionsList.map((e) => EvolvesTo.fromJson(e)).toList();
       return EvolvesTo(
         pokemonName: parsedJson['species']['name'],
         evolutions: evolutionsList,

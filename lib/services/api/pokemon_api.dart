@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
-import 'package:pokedex/models/pokemon.dart';
-import 'package:pokedex/models/pokemon_evolution_chain.dart';
-import 'package:pokedex/models/pokemon_species.dart';
+import 'package:pokedex/models/pokemon/pokemon.dart';
+import 'package:pokedex/models/pokemon_evolution/pokemon_evolution_chain.dart';
+import 'package:pokedex/models/pokemon_species/pokemon_species.dart';
 import 'package:pokedex/services/api/pokemon_evolution_api.dart';
 
 import 'api_config.dart';

@@ -3,8 +3,12 @@ import 'dart:math' as math;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/material.dart';
-import 'package:pokedex/models/pokemon.dart';
-import 'package:pokedex/models/pokemon_evolution_chain.dart';
+import 'package:pokedex/models/pokemon/pokemon.dart';
+import 'package:pokedex/models/pokemon/pokemon_base_stats.dart';
+import 'package:pokedex/models/pokemon/pokemon_move.dart';
+import 'package:pokedex/models/pokemon/pokemon_type.dart';
+import 'package:pokedex/models/pokemon_evolution/evolves_to.dart';
+import 'package:pokedex/models/pokemon_evolution/pokemon_evolution_chain.dart';
 import 'package:pokedex/services/pokemon_service.dart';
 import 'package:pokedex/utilities/color_utilities.dart';
 import 'package:pokedex/utilities/global_constants.dart';
@@ -12,6 +16,7 @@ import 'package:pokedex/utilities/pokemon_color_picker.dart';
 import 'package:pokedex/utilities/string_extension.dart';
 import 'package:pokedex/utilities/themes.dart';
 
+// COMMENT RAEL: this file isn't in format
 class PokemonPage extends StatefulWidget {
   static const String route = '/pokemon';
 
@@ -111,6 +116,7 @@ class _CustomScaffoldState extends State<CustomScaffold> {
   }
 }
 
+// COMMENT RAEL: these widgets should either be private or in new files.
 class PokemonPageHeader extends StatelessWidget {
   const PokemonPageHeader({
     Key key,
@@ -169,6 +175,8 @@ class PokemonPageHeader extends StatelessWidget {
   }
 }
 
+// COMMENT RAEL: not needed, you can construct this on the widget that is calling this.
+// it just returns a simple text widget.
 class PokemonName extends StatelessWidget {
   const PokemonName({
     Key key,
@@ -186,6 +194,8 @@ class PokemonName extends StatelessWidget {
   }
 }
 
+// COMMENT RAEL: not needed, you can construct this on the widget that is calling this.
+// it just returns a simple text widget.
 class PokemonId extends StatelessWidget {
   const PokemonId({
     Key key,
@@ -591,6 +601,8 @@ class AboutGridValue extends StatelessWidget {
   }
 }
 
+// COMMENT RAEL: create a models folder under pokemon_page folder
+// create a file under it named base_stats.dart put this there.
 class BaseStats {
   final String statName;
   final int statValue;

@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:pokedex/models/pokemon.dart';
+import 'package:pokedex/models/pokemon/pokemon.dart';
+import 'package:pokedex/models/pokemon/pokemon_type.dart';
 import 'package:pokedex/pages/pokemon_page/pokemon_page.dart';
 import 'package:pokedex/pages/pokemon_page/pokemon_page_arguments.dart';
 import 'package:pokedex/utilities/color_utilities.dart';
@@ -64,6 +65,7 @@ class PokemonListCard extends StatelessWidget {
 // TODO: Feedback
 // Avoid creating multiple widgets in 1 file.
 // 1 widget = 1 file
+// COMMENT RAEL: these widgets should either be private or in a new file
 class PokemonName extends StatelessWidget {
   const PokemonName({
     Key key,
