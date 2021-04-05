@@ -16,14 +16,22 @@ class PokemonListCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => Navigator.pushNamed(
-        context,
-        PokemonPage.route,
-        arguments: PokemonPageArguments(
-          pokemon,
-          PokemonColorPicker.getColor(pokemon.typeList[0].type.name),
-        ),
-      ),
+      onTap: () {
+        // TODO: Feedback
+        // In most cases, callback should be passed in the constructor.
+        // Parent widgets should decide what their children should do for callbacks.
+        // Because if not, it introduces code coupling.
+        // For instance, if this widgets is used in a different page,
+        // and onTap of this item it will have a different behavior than navigator to PokemonPage
+        return Navigator.pushNamed(
+          context,
+          PokemonPage.route,
+          arguments: PokemonPageArguments(
+            pokemon,
+            PokemonColorPicker.getColor(pokemon.typeList[0].type.name),
+          ),
+        );
+      },
       child: Card(
         color: PokemonColorPicker.getColor(pokemon.typeList[0].type.name),
         child: Stack(
@@ -53,6 +61,9 @@ class PokemonListCard extends StatelessWidget {
   }
 }
 
+// TODO: Feedback
+// Avoid creating multiple widgets in 1 file.
+// 1 widget = 1 file
 class PokemonName extends StatelessWidget {
   const PokemonName({
     Key key,
@@ -74,6 +85,8 @@ class PokemonName extends StatelessWidget {
   }
 }
 
+// TODO: Feedback
+// Same here
 class PokemonTypeList extends StatelessWidget {
   const PokemonTypeList({
     Key key,
@@ -109,6 +122,8 @@ class PokemonTypeList extends StatelessWidget {
   }
 }
 
+// TODO: Feedback
+// Same here
 class PokemonTypeName extends StatelessWidget {
   const PokemonTypeName({
     Key key,
@@ -139,6 +154,8 @@ class PokemonTypeName extends StatelessWidget {
   }
 }
 
+// TODO: Feedback
+// Same here
 class PokemonImage extends StatelessWidget {
   const PokemonImage({
     Key key,

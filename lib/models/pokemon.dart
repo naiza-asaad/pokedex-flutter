@@ -2,6 +2,7 @@ import 'package:pokedex/models/pokemon_evolution_chain.dart';
 import 'package:pokedex/models/pokemon_species.dart';
 import 'package:pokedex/utilities/string_extension.dart';
 
+// TODO: 1 model = 1 file
 class Pokemon {
   int id;
   String name;
@@ -34,22 +35,18 @@ class Pokemon {
 
   factory Pokemon.fromJson(Map<String, dynamic> parsedJson) {
     var tempTypeList = parsedJson['types'] as List;
-    List<PokemonType> typeList =
-        tempTypeList.map((e) => PokemonType.fromJson(e)).toList();
+    List<PokemonType> typeList = tempTypeList.map((e) => PokemonType.fromJson(e)).toList();
 
     var tempAbilityList = parsedJson['abilities'] as List;
-    List<PokemonAbility> abilityList =
-        tempAbilityList.map((e) => PokemonAbility.fromJson(e)).toList();
+    List<PokemonAbility> abilityList = tempAbilityList.map((e) => PokemonAbility.fromJson(e)).toList();
 
     var tempMoveList = parsedJson['moves'] as List;
-    List<PokemonMove> moveList =
-        tempMoveList.map((e) => PokemonMove.fromJson(e)).toList();
+    List<PokemonMove> moveList = tempMoveList.map((e) => PokemonMove.fromJson(e)).toList();
 
     return Pokemon(
       id: parsedJson['id'],
       name: (parsedJson['name'] as String).inCaps,
-      imageUrl: parsedJson['sprites']['other']['official-artwork']
-          ['front_default'],
+      imageUrl: parsedJson['sprites']['other']['official-artwork']['front_default'],
       typeList: typeList,
       abilityList: abilityList,
       heightInDecimeters: parsedJson['height'],
@@ -85,8 +82,7 @@ class PokemonBaseStats {
   });
 
   factory PokemonBaseStats.fromJson(List<dynamic> parsedList) {
-    List<PokemonBaseStat> baseStatList =
-        parsedList.map((e) => PokemonBaseStat.fromJson(e)).toList();
+    List<PokemonBaseStat> baseStatList = parsedList.map((e) => PokemonBaseStat.fromJson(e)).toList();
     return PokemonBaseStats(
       hp: baseStatList[0].baseStat,
       attack: baseStatList[1].baseStat,

@@ -7,6 +7,9 @@ import 'package:pokedex/services/pokemon_service.dart';
 import 'package:pokedex/utilities/global_constants.dart';
 import 'package:pokedex/widgets/search_widget.dart';
 
+// TODO: Feedback
+// Try to create components/custom widgets.
+// Break widgets down as many as possible and should be reasonable
 class PokemonListPage extends StatefulWidget {
   static const String route = '/';
 
@@ -88,12 +91,10 @@ class _PokemonListPageState extends State<PokemonListPage> {
                         delegate: SliverChildBuilderDelegate(
                           (context, index) {
                             if (!hasSearched) {
-                              Pokemon pokemon =
-                                  simplePokemonList.pokemonList[index];
+                              Pokemon pokemon = simplePokemonList.pokemonList[index];
                               return PokemonListCard(pokemon);
                             } else {
-                              if ((searchResultList == null ||
-                                  searchResultList.length <= 0)) {
+                              if ((searchResultList == null || searchResultList.length <= 0)) {
                                 return Center(child: Text('No Pokemon found'));
                               } else {
                                 Pokemon pokemon = searchResultList[index];
@@ -103,9 +104,7 @@ class _PokemonListPageState extends State<PokemonListPage> {
                           },
                           childCount: !hasSearched
                               ? simplePokemonList.pokemonList.length
-                              : ((searchResultList == null ||
-                                          searchResultList.length <= 0) &&
-                                      hasSearched)
+                              : ((searchResultList == null || searchResultList.length <= 0) && hasSearched)
                                   ? 1 // If 0, itemBuilder never gets called.
                                   : searchResultList.length,
                         ),
@@ -144,6 +143,9 @@ class _PokemonListPageState extends State<PokemonListPage> {
     });
   }
 
+  // TODO: Feedback
+  // If the user typed more than 1 thousand times, will it perform 1k requests? If so, please
+  // use a debounce function where it detects after x milliseconds that the user isn't typing, then do the request
   void performSearch(String searchText) async {
     setState(() {
       isLoading = true;
@@ -164,8 +166,7 @@ class _PokemonListPageState extends State<PokemonListPage> {
   void handleScroll() {
     if (!isLoading &&
         !isLoadingMorePokemon &&
-        scrollController.position.pixels ==
-            scrollController.position.maxScrollExtent) {
+        scrollController.position.pixels == scrollController.position.maxScrollExtent) {
       // At the bottom of the list
       setState(() {
         isLoadingMorePokemon = true;
@@ -199,6 +200,11 @@ class _PokemonListPageState extends State<PokemonListPage> {
     fetchInitialPokemonList();
   }
 
+  // TODO: Feedback
+  //  avoid building widgets in methods.
+  //  This may not affect for simple implementations but in complex apps,
+  //  this could lead to performance issue as widgets might not be properly inserted into the widget tree.
+  //  Rather, always prefer creating stateless widgets
   buildProgressIndicatorFooter() {
     if (!isLoadingMorePokemon) {
       return SliverToBoxAdapter(
@@ -214,8 +220,7 @@ class _PokemonListPageState extends State<PokemonListPage> {
           padding: kProgressIndicatorFooterPadding,
           child: SizedBox(
             child: Container(
-              child: CircularProgressIndicator(
-                  strokeWidth: kProgressIndicatorStrokeWidth),
+              child: CircularProgressIndicator(strokeWidth: kProgressIndicatorStrokeWidth),
               width: kProgressIndicatorFooterWidth,
               height: kProgressIndicatorFooterHeight,
             ),

@@ -1,3 +1,4 @@
+// TODO: same here
 class PokemonEvolutionChain {
   EvolvesTo chain;
 
@@ -36,8 +37,7 @@ class EvolvesTo {
         evolutions: [],
       );
     } else {
-      List<EvolvesTo> evolutionsList =
-          tempEvolutionsList.map((e) => EvolvesTo.fromJson(e)).toList();
+      List<EvolvesTo> evolutionsList = tempEvolutionsList.map((e) => EvolvesTo.fromJson(e)).toList();
       return EvolvesTo(
         pokemonName: parsedJson['species']['name'],
         evolutions: evolutionsList,
