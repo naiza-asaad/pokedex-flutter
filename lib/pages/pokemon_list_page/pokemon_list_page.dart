@@ -5,6 +5,8 @@ import 'package:pokedex/pages/pokemon_list_page/pokemon_list_card.dart';
 import 'package:pokedex/services/pokemon_list_service.dart';
 import 'package:pokedex/services/pokemon_service.dart';
 import 'package:pokedex/utilities/global_constants.dart';
+import 'package:pokedex/widgets/empty_footer.dart';
+import 'package:pokedex/widgets/progress_indicator_footer.dart';
 import 'package:pokedex/widgets/search_widget.dart';
 
 // TODO: Feedback
@@ -20,6 +22,7 @@ class PokemonListPage extends StatefulWidget {
 
 class _PokemonListPageState extends State<PokemonListPage> {
   SimplePokemonList simplePokemonList;
+
   // COMMENT RAEL: doesn't need a value here. initialize the default value on initState() method.
   // bool isLoading;
   // bool isLoadingMorePokemon;
@@ -34,6 +37,7 @@ class _PokemonListPageState extends State<PokemonListPage> {
   bool hasSearched = false;
   final searchFilter = TextEditingController();
   List<Pokemon> searchResultList = [];
+
   // COMMENT RAEL: not needed just call these values on where this variables are being called
   final Icon searchIcon = const Icon(Icons.search);
   final Icon closeIcon = const Icon(Icons.close);
@@ -99,10 +103,12 @@ class _PokemonListPageState extends State<PokemonListPage> {
                         delegate: SliverChildBuilderDelegate(
                           (context, index) {
                             if (!hasSearched) {
-                              Pokemon pokemon = simplePokemonList.pokemonList[index];
+                              Pokemon pokemon =
+                                  simplePokemonList.pokemonList[index];
                               return PokemonListCard(pokemon);
                             } else {
-                              if ((searchResultList == null || searchResultList.length <= 0)) {
+                              if ((searchResultList == null ||
+                                  searchResultList.length <= 0)) {
                                 return Center(child: Text('No Pokemon found'));
                               } else {
                                 Pokemon pokemon = searchResultList[index];
@@ -112,12 +118,16 @@ class _PokemonListPageState extends State<PokemonListPage> {
                           },
                           childCount: !hasSearched
                               ? simplePokemonList.pokemonList.length
-                              : ((searchResultList == null || searchResultList.length <= 0) && hasSearched)
+                              : ((searchResultList == null ||
+                                          searchResultList.length <= 0) &&
+                                      hasSearched)
                                   ? 1 // If 0, itemBuilder never gets called.
                                   : searchResultList.length,
                         ),
                       ),
-                      buildProgressIndicatorFooter(),
+                      !isLoadingMorePokemon
+                          ? SliverToBoxAdapter(child: EmptyFooter())
+                          : SliverToBoxAdapter(child: ProgressIndicatorFooter())
                     ],
                   ),
                 ),
@@ -169,7 +179,7 @@ class _PokemonListPageState extends State<PokemonListPage> {
     });
   }
 
-  // COMMENT RAEL: create a new folder named state then add a folder actions with 
+  // COMMENT RAEL: create a new folder named state then add a folder actions with
   // file that is named actions.dart put this there. same for the other api calls.
   // NOTE: might be more applicable when async redux is introduced.
   Future<List<Pokemon>> fetchSearchPokemonList(String searchText) async {
@@ -179,7 +189,8 @@ class _PokemonListPageState extends State<PokemonListPage> {
   void handleScroll() {
     if (!isLoading &&
         !isLoadingMorePokemon &&
-        scrollController.position.pixels == scrollController.position.maxScrollExtent) {
+        scrollController.position.pixels ==
+            scrollController.position.maxScrollExtent) {
       // At the bottom of the list
       // COMMENT RAEL: setState(() => isLoadingMorePokemon = true);
       setState(() {
@@ -214,37 +225,5 @@ class _PokemonListPageState extends State<PokemonListPage> {
     });
 
     fetchInitialPokemonList();
-  }
-
-  // TODO: Feedback
-  //  avoid building widgets in methods.
-  //  This may not affect for simple implementations but in complex apps,
-  //  this could lead to performance issue as widgets might not be properly inserted into the widget tree.
-  //  Rather, always prefer creating stateless widgets
-  buildProgressIndicatorFooter() {
-    // COMMENT RAEL: create a new folder inside pokemon_list_page folder
-    // named widgets and create a new file that accepts a boolean and return this widget.
-    if (!isLoadingMorePokemon) {
-      return SliverToBoxAdapter(
-        child: SizedBox(
-          height: kPokemonListPageFooterHeight,
-        ),
-      );
-    }
-
-    return SliverToBoxAdapter(
-      child: Center(
-        child: Padding(
-          padding: kProgressIndicatorFooterPadding,
-          child: SizedBox(
-            child: Container(
-              child: CircularProgressIndicator(strokeWidth: kProgressIndicatorStrokeWidth),
-              width: kProgressIndicatorFooterWidth,
-              height: kProgressIndicatorFooterHeight,
-            ),
-          ),
-        ),
-      ),
-    );
   }
 }
