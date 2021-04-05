@@ -95,8 +95,7 @@ class _PokemonListPageState extends State<PokemonListPage> {
                       )
                     : hasSearchResults()
                         ? PokemonSearchResultsGrid(
-                            searchResultList: searchResultList,
-                          )
+                            searchResultList: searchResultList)
                         : EmptyPageWithMessage(message: 'No Pokemon Found'),
               ),
           ],
@@ -106,7 +105,7 @@ class _PokemonListPageState extends State<PokemonListPage> {
   }
 
   bool hasSearchResults() {
-    return searchResultList?.isNotEmpty ?? false;
+    return searchResultList?.isNotEmpty;
   }
 
   void onPressSearchIcon() {
