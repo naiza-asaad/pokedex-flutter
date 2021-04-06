@@ -137,15 +137,13 @@ class _PokemonListPageState extends State<PokemonListPage> {
   }
 
   void _onChangeSearchField(String text) {
-    debouncer.run(() {
-      performSearch(text);
-    });
+    debouncer.run(() => performSearch(text));
   }
 
   void performSearch(String searchText) async {
     setState(() => isLoading = true);
 
-    final tempPokemonList = await fetchSearchPokemonList(searchText);
+    final tempPokemonList = await fetchSearchPokemonList(searchText.trim());
     setState(() {
       hasSearched = true;
       searchResultList = tempPokemonList;
