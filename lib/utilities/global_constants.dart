@@ -16,6 +16,7 @@ const kProgressIndicatorStrokeWidth = 2.0;
 const kProgressIndicatorFooterHeight = 35.0;
 const kProgressIndicatorFooterWidth = 35.0;
 const kProgressIndicatorFooterPadding = const EdgeInsets.all(12.0);
+const kSearchDebounceMilliseconds = 500;
 
 //
 // PokemonListPage's PokemonListCard and PokemonPage UI constants

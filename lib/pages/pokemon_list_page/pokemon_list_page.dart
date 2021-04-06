@@ -5,6 +5,7 @@ import 'package:pokedex/pages/pokemon_list_page/widgets/pokemon_scroll_grid.dart
 import 'package:pokedex/pages/pokemon_list_page/widgets/pokemon_search_results_grid.dart';
 import 'package:pokedex/services/pokemon_list_service.dart';
 import 'package:pokedex/services/pokemon_service.dart';
+import 'package:pokedex/utilities/debouncer.dart';
 import 'package:pokedex/utilities/global_constants.dart';
 import 'package:pokedex/widgets/empty_page_with_message.dart';
 import 'package:pokedex/widgets/loading_page_indicator.dart';
@@ -27,6 +28,7 @@ class _PokemonListPageState extends State<PokemonListPage> {
   TextEditingController searchFilter;
   List<Pokemon> searchResultList;
   ScrollController scrollController;
+  Debouncer debouncer;
 
   @override
   void initState() {
@@ -39,6 +41,10 @@ class _PokemonListPageState extends State<PokemonListPage> {
     searchResultList = [];
     scrollController = ScrollController();
     scrollController.addListener(handleScroll);
+    debouncer = Debouncer(
+      milliseconds: kSearchDebounceMilliseconds,
+      action: () => performSearch,
+    );
     fetchInitialPokemonList();
   }
 
@@ -57,6 +63,7 @@ class _PokemonListPageState extends State<PokemonListPage> {
                 searchBoxHint: 'Search Pokemon',
                 searchCallback: performSearch,
                 searchFilter: searchFilter,
+                onChangeCallback: _onChangeSearchField,
               )
             : Text(
                 'Pokedex',
@@ -105,7 +112,7 @@ class _PokemonListPageState extends State<PokemonListPage> {
   }
 
   bool hasSearchResults() {
-    return searchResultList?.isNotEmpty;
+    return searchResultList?.isNotEmpty ?? false;
   }
 
   void onPressSearchIcon() {
@@ -129,9 +136,12 @@ class _PokemonListPageState extends State<PokemonListPage> {
     setState(() => isLoading = false);
   }
 
-  // TODO: Feedback
-  // If the user typed more than 1 thousand times, will it perform 1k requests? If so, please
-  // use a debounce function where it detects after x milliseconds that the user isn't typing, then do the request
+  void _onChangeSearchField(String text) {
+    debouncer.run(() {
+      performSearch(text);
+    });
+  }
+
   void performSearch(String searchText) async {
     setState(() => isLoading = true);
 
